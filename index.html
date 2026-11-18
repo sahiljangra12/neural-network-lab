@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Neural Network Lab · Train a neural network in your browser</title>
+<meta name="description" content="An interactive neural network playground: build a network, train it live with backpropagation, and see what every neuron learns. With guided challenges and step-by-step lessons.">
+<link rel="icon" href="img/logo.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+<script src="js/theme.js"></script>
+</head>
+<body>
+<header class="nav"><div class="in">
+  <a class="brand" href="index.html"><img class="logo" src="img/logo.svg" alt=""><span class="full">Neural Network Lab</span></a>
+  <nav>
+    <a href="index.html" class="on">Playground</a>
+    <a href="#challenges">Challenges</a>
+    <a href="learn.html">Learn</a>
+    <a href="learn.html#quiz" class="opt">Quiz</a>
+  </nav>
+  <div class="sp"></div>
+  <button class="iconbtn" id="share" title="Copy a link to this exact setup" aria-label="Copy link">⧉</button>
+  <button class="iconbtn" id="themebtn" title="Toggle dark mode" aria-label="Toggle dark mode"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg></button>
+</div></header>
+
+<section class="hero">
+  <div>
+    <h1>Train a neural network. Watch it think.</h1>
+    <p>Pick a dataset, shape the network, press play. Every square is a neuron showing what it has learned so far; every line is a weight, blue for positive and orange for negative.</p>
+  </div>
+  <div class="steps3">
+    <a href="learn.html"><b>1 · Learn</b>Neurons, loss, backprop</a>
+    <a href="#challenges"><b>2 · Build</b>Solve 10 challenges</a>
+    <a href="learn.html#quiz"><b>3 · Test</b>True or false quiz</a>
+  </div>
+</section>
+
+<div class="topbar"><div class="controls">
+  <div class="runctl">
+    <button class="roundbtn" id="reset" title="Reset the network (R)" aria-label="Reset"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M3 12a9 9 0 1 0 3-6.7"/><path d="M3 4v5h5"/></svg></button>
+    <button class="play" id="play" title="Play / pause (Space)" aria-label="Play"><svg id="playicon" viewBox="0 0 24 24" fill="currentColor"><path d="M7 4.5v15l13-7.5z"/></svg></button>
+    <button class="roundbtn" id="step" title="Train one epoch (S)" aria-label="Step"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M5 5v14l10-7zM17 5h2.5v14H17z"/></svg></button>
+  </div>
+  <div class="epoch">Epoch<b id="epoch">000,000</b></div>
+  <div class="ctl"><span>Learning rate</span><select id="lr"></select></div>
+  <div class="ctl"><span>Activation</span><select id="act"></select></div>
+  <div class="ctl"><span>Optimizer</span><select id="opt"><option value="sgd">SGD</option><option value="momentum">Momentum</option><option value="adam">Adam</option></select></div>
+  <div class="ctl"><span>Regularization</span><select id="reg"><option value="none">None</option><option value="l1">L1 (lasso)</option><option value="l2">L2 (ridge)</option></select></div>
+  <div class="ctl"><span>Reg. rate λ</span><select id="regRate"></select></div>
+  <div class="ctl"><span>Problem</span><select id="problem"><option value="class">Classification</option><option value="reg">Regression</option></select></div>
+</div></div>
+
+<div class="mission"><div class="bar" id="mission">
+  <div class="t" id="missiontext"></div>
+  <button class="btn sm" id="missionclose">Close</button>
+</div></div>
+
+<main class="pg">
+  <!-- LEFT: data -->
+  <div class="left">
+    <div class="panel">
+      <h3>Data</h3>
+      <div class="sub" style="margin-bottom:8px">Which dataset?</div>
+      <div class="dsgrid" id="dsgrid"></div>
+      <div class="field"><div class="row"><span>Training data</span><span class="val" id="ratiov"></span></div><input type="range" id="ratio" min="10" max="90" step="10"></div>
+      <div class="field"><div class="row"><span>Noise</span><span class="val" id="noisev"></span></div><input type="range" id="noise" min="0" max="50" step="5"></div>
+      <div class="field"><div class="row"><span>Batch size</span><span class="val" id="batchv"></span></div><input type="range" id="batch" min="1" max="30" step="1"></div>
+      <div class="field"><button class="btn sm" id="regen">↻ Regenerate data</button></div>
+    </div>
+    <div class="panel">
+      <h3>How to read this</h3>
+      <div class="sub" style="font-size:12.5px;line-height:1.55">
+        <p style="margin:0 0 6px"><b style="color:var(--pos)">Blue</b> = positive output / weight, <b style="color:var(--neg)">orange</b> = negative.</p>
+        <p style="margin:0 0 6px">Line thickness = how big the weight is. <b>Click a line</b> to edit its weight.</p>
+        <p style="margin:0 0 6px"><b>Hover a neuron</b> to show its picture on the big output map.</p>
+        <p style="margin:0"><b>Click an input</b> on the left of the network to switch that feature on or off.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- MIDDLE: network -->
+  <div class="panel">
+    <div class="nethead">
+      <h3 style="margin:0">Features → hidden layers → output</h3>
+      <div class="layers">
+        <button class="roundbtn" id="remlayer" title="Remove a hidden layer" aria-label="Remove layer" style="width:28px;height:28px">−</button>
+        <span><b id="nlayers">2</b> hidden layers</span>
+        <button class="roundbtn" id="addlayer" title="Add a hidden layer" aria-label="Add layer" style="width:28px;height:28px">+</button>
+        <span class="sub" id="nparams" style="margin-left:8px"></span>
+      </div>
+    </div>
+    <div class="netwrap"><div class="net" id="net"><svg class="links" id="links"></svg></div></div>
+  </div>
+
+  <!-- RIGHT: output -->
+  <div class="right">
+    <div class="panel">
+      <h3>Output <span style="display:flex;gap:12px;text-transform:none;letter-spacing:0;font-weight:400">
+        <label class="chk"><input type="checkbox" id="showTest"> Show test data</label>
+        <label class="chk"><input type="checkbox" id="discretize"> Discretize</label>
+      </span></h3>
+      <div class="outbox"><canvas id="out" width="400" height="400"></canvas></div>
+      <div class="axis"><span>−6</span><span>X₁ →</span><span>6</span></div>
+      <div class="probe" id="probe">Hover the map to read the network's prediction at any point.</div>
+      <div class="scale"></div>
+      <div class="scalelbl"><span id="sclo">−1</span><span id="scmid">0</span><span id="schi">1</span></div>
+      <div class="stats">
+        <div class="stat"><span>Train loss</span><b id="trainloss">–</b></div>
+        <div class="stat"><span>Test loss</span><b id="testloss">–</b></div>
+        <div class="stat"><span id="acclbl">Train accuracy</span><b id="trainacc">–</b></div>
+        <div class="stat"><span id="acclbl2">Test accuracy</span><b id="testacc">–</b></div>
+      </div>
+      <canvas id="losschart"></canvas>
+      <div class="legend"><span><i style="background:var(--fg)"></i>Train</span><span><i style="background:var(--faint)"></i>Test</span><span id="lossname"></span></div>
+    </div>
+    <div class="panel">
+      <h3>Live insight</h3>
+      <div class="insight" id="insight"><b>Press play</b>The network starts with random weights, so its output map is close to random. Press play and watch it organise itself.</div>
+    </div>
+  </div>
+</main>
+
+<section class="section" id="challenges">
+  <h2>Challenges</h2>
+  <p class="lead">Each one loads a setup and a question. They go from "why does this fail?" to "can you beat the spiral?". Each teaches one idea you'll meet in any machine learning course.</p>
+  <div class="cards" id="cards"></div>
+</section>
+
+<section class="section">
+  <h2>What's going on under the hood</h2>
+  <p class="lead">Everything here runs in your browser with a hand-written network, about 200 lines of JavaScript and no libraries.</p>
+  <div class="guide">
+    <div class="card"><div class="lvl l2">Forward pass</div><h4>Each neuron is a weighted sum plus a squash</h4><p>A neuron computes <code>a = f(w·x + b)</code>. The first hidden layer can only draw straight lines. Each later layer combines those lines into curves, rings and spirals.</p></div>
+    <div class="card"><div class="lvl l2">Loss</div><h4>Classification uses log loss</h4><p>The output neuron is a sigmoid, so it is literally logistic regression on the last hidden layer. Training minimises the negative log-likelihood. Regression uses squared error.</p></div>
+    <div class="card"><div class="lvl l2">Backpropagation</div><h4>The chain rule, layer by layer</h4><p>For every example the error at the output, <code>p − y</code>, flows backwards. Each weight's gradient is (error arriving at its neuron) × (input it saw). <a href="learn.html#backprop">Step through it →</a></p></div>
+    <div class="card"><div class="lvl l2">Update</div><h4>Gradient descent on mini-batches</h4><p>After each batch, every weight moves a step <code>−η × gradient</code>. One epoch is one pass through the training data. Momentum and Adam are smarter ways to choose that step.</p></div>
+    <div class="card"><div class="lvl l2">Regularization</div><h4>L2 = ridge, L1 = lasso</h4><p>L2 adds <code>λw</code> to each gradient (weight decay), shrinking weights smoothly. L1 adds <code>λ·sign(w)</code>, pushing weak weights to exactly zero, so the lines vanish.</p></div>
+    <div class="card"><div class="lvl l2">Shortcuts</div><h4>Keyboard</h4><p><span class="kbd">Space</span> play/pause · <span class="kbd">S</span> step one epoch · <span class="kbd">R</span> reset · <span class="kbd">⧉</span> copies a link to your exact setup.</p></div>
+  </div>
+</section>
+
+<footer class="site"><div class="in">
+  <span>Neural Network Lab · built by Sahil · open source on <a href="https://github.com/sahiljangra12/neural-network-lab">GitHub</a></span>
+  <span>Inspired by <a href="https://playground.tensorflow.org">TensorFlow Playground</a>. All code here is written from scratch.</span>
+</div></footer>
+
+<div class="tooltip" id="tip"></div>
+<div class="wedit" id="wedit"><div style="margin-bottom:6px;color:var(--mut)" id="weditlbl">Weight</div><input id="weditin" type="number" step="0.1"> <button class="btn sm" id="weditok">Set</button></div>
+
+<script type="module" src="js/playground.js"></script>
+</body>
+</html>

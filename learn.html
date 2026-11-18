@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Learn · Neural Network Lab</title>
+<meta name="description" content="Interactive lessons on neural networks: the neuron, activation functions, why depth matters, gradient descent, backpropagation step by step, overfitting and regularization, plus a glossary and quiz.">
+<link rel="icon" href="img/logo.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+<script src="js/theme.js"></script>
+</head>
+<body>
+<header class="nav"><div class="in">
+  <a class="brand" href="index.html"><img class="logo" src="img/logo.svg" alt=""><span class="full">Neural Network Lab</span></a>
+  <nav>
+    <a href="index.html">Playground</a>
+    <a href="index.html#challenges">Challenges</a>
+    <a href="learn.html" class="on">Learn</a>
+    <a href="#quiz" class="opt">Quiz</a>
+  </nav>
+  <div class="sp"></div>
+  <button class="iconbtn" id="themebtn" title="Toggle dark mode" aria-label="Toggle dark mode"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg></button>
+</div></header>
+
+<div class="learn">
+<aside class="toc" id="toc">
+  <b>Lessons</b>
+  <a href="#neuron">1 · The neuron</a>
+  <a href="#activations">2 · Activation functions</a>
+  <a href="#depth">3 · Why hidden layers</a>
+  <a href="#loss">4 · Loss: measuring wrong</a>
+  <a href="#gradient">5 · Gradient descent</a>
+  <a href="#backprop">6 · Backpropagation</a>
+  <a href="#overfitting">7 · Overfitting &amp; regularization</a>
+  <a href="#glossary">Glossary</a>
+  <a href="#quiz" class="opt">Quiz</a>
+  <div class="prog"><i id="prog"></i></div>
+</aside>
+
+<main>
+<!-- 1 NEURON -->
+<section class="lesson" id="neuron">
+  <div class="num">Lesson 1</div>
+  <h2>The neuron: a weighted vote and a squash</h2>
+  <p class="lead">Every neural network, from this page to the largest language models, is built from one simple unit.</p>
+  <p>A neuron takes its inputs, multiplies each by a <b>weight</b>, adds a <b>bias</b>, and passes the total through an <b>activation function</b>:</p>
+  <div class="formula" style="max-width:560px">a = f( w₁x₁ + w₂x₂ + b ) = f(z)</div>
+  <p>The weights decide which inputs matter and in which direction. The bias shifts the threshold. The weighted sum <code>z</code> is zero along a straight line, so <b>one neuron always splits the plane with a straight line</b>. The activation decides how sharply it switches from one side to the other.</p>
+  <div class="widget">
+    <div class="wgrid">
+      <div>
+        <div class="pills" id="nact"></div>
+        <div class="sl"><span>w₁</span><input type="range" id="nw1" min="-3" max="3" step="0.05" value="1"><span class="val" id="nw1v"></span></div>
+        <div class="sl"><span>w₂</span><input type="range" id="nw2" min="-3" max="3" step="0.05" value="-0.6"><span class="val" id="nw2v"></span></div>
+        <div class="sl"><span>bias b</span><input type="range" id="nb" min="-6" max="6" step="0.1" value="0.5"><span class="val" id="nbv"></span></div>
+        <div class="formula" id="nformula" style="margin-top:12px"></div>
+        <p class="sub" style="margin-top:10px">The dashed line is the <b>decision boundary</b> where z = 0. Change w₁ and w₂ to rotate it; change b to slide it. Larger weights make the switch sharper. Hover the map to probe a point.</p>
+        <div class="probe" id="nprobe"></div>
+      </div>
+      <div><canvas class="plot" id="ncv" style="aspect-ratio:1"></canvas></div>
+    </div>
+  </div>
+  <div class="callout"><b>Connection to statistics</b>With a sigmoid activation, one neuron <i>is</i> logistic regression: P(y = 1) = σ(wᵀx + b), and the log-odds wᵀx + b are linear in x. Training it by minimising log loss is exactly maximum likelihood.</div>
+</section>
+
+<!-- 2 ACTIVATIONS -->
+<section class="lesson" id="activations">
+  <div class="num">Lesson 2</div>
+  <h2>Activation functions: where the bending comes from</h2>
+  <p class="lead">Without a nonlinear activation, a hundred layers can do no more than one.</p>
+  <p>The activation is applied to each neuron's sum. Its <b>shape</b> sets what the neuron can express, and its <b>slope (derivative)</b> sets how well a learning signal can pass back through it during training.</p>
+  <div class="widget">
+    <div class="pills" id="actpills"></div>
+    <div class="wgrid">
+      <div><canvas class="plot" id="actcv" style="aspect-ratio:4/3"></canvas>
+        <div class="legend"><span><i style="background:var(--pos)"></i>f(z)</span><span><i style="background:var(--neg)"></i>slope f′(z)</span></div></div>
+      <div>
+        <div class="formula" id="actformula" style="white-space:pre-wrap"></div>
+        <div class="facts" id="actfacts"></div>
+        <p id="actnote" style="font-size:14px;margin-top:12px"></p>
+      </div>
+    </div>
+  </div>
+  <div class="callout exam"><b>Common trap</b>"Neural networks must never use linear activations." <b>False.</b> A linear output layer is standard for regression. What fails is a network that is linear <i>everywhere</i>: W₂(W₁x + b₁) + b₂ = (W₂W₁)x + c collapses into a single linear model.</div>
+</section>
+
+<!-- 3 DEPTH -->
+<section class="lesson" id="depth">
+  <div class="num">Lesson 3</div>
+  <h2>Why hidden layers: combining lines into shapes</h2>
+  <p class="lead">One neuron draws a line. A layer of neurons draws several lines. The next layer combines them.</p>
+  <p>Below, three networks train on the same data at once. The first has <b>no hidden layer</b>, so it is plain logistic regression. The second has <b>4 tanh neurons</b>. The third also has 4 hidden neurons, but they are <b>linear</b>.</p>
+  <div class="widget">
+    <div class="pills" id="depthds"></div>
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:14px" id="depthgrid"></div>
+    <div class="btns" style="display:flex;gap:8px;margin-top:12px"><button class="btn pri" id="depthgo">▶ Train all three</button><button class="btn" id="depthreset">Reset</button></div>
+  </div>
+  <p>Only the nonlinear hidden layer can bend the boundary. This is the <b>universal approximation</b> idea: with enough hidden neurons and a nonlinear activation, a network can approximate any smooth function. Depth helps further: each layer can <b>fold</b> the space the layer before it built, so deep networks express complicated shapes with far fewer neurons.</p>
+  <div class="callout"><b>Hidden layers as learned features</b>Adding X₁² or X₁X₂ by hand (basis expansion) also lets a linear model bend. A hidden layer <i>learns</i> its own features from the data instead. <a href="index.html?challenge=3">Compare both in the playground →</a></div>
+</section>
+
+<!-- 4 LOSS -->
+<section class="lesson" id="loss">
+  <div class="num">Lesson 4</div>
+  <h2>Loss: putting a number on "wrong"</h2>
+  <p class="lead">Training needs one number to push down. That number is the loss.</p>
+  <div class="wgrid">
+    <div class="widget" style="margin:0">
+      <h3 style="margin:0 0 4px;font-size:15px">Classification: log loss</h3>
+      <p class="sub" style="margin:0 0 8px">The true label is y = 1. Drag the predicted probability p and watch the penalty.</p>
+      <div class="sl"><span>p</span><input type="range" id="lp" min="0.01" max="0.99" step="0.01" value="0.7"><span class="val" id="lpv"></span></div>
+      <canvas class="plot" id="lcv1" style="aspect-ratio:16/10"></canvas>
+      <div class="formula" id="lf1" style="margin-top:8px"></div>
+    </div>
+    <div class="widget" style="margin:0">
+      <h3 style="margin:0 0 4px;font-size:15px">Regression: squared error</h3>
+      <p class="sub" style="margin:0 0 8px">The true value is y = 0. Drag the prediction ŷ.</p>
+      <div class="sl"><span>ŷ</span><input type="range" id="ly" min="-2" max="2" step="0.02" value="0.8"><span class="val" id="lyv"></span></div>
+      <canvas class="plot" id="lcv2" style="aspect-ratio:16/10"></canvas>
+      <div class="formula" id="lf2" style="margin-top:8px"></div>
+    </div>
+  </div>
+  <p>Log loss punishes <b>confident mistakes</b> without limit: predicting p = 0.01 for something that happened costs −log(0.01) ≈ 4.6. Minimising the average log loss is the same as <b>maximising the likelihood</b> of the labels under a Bernoulli model. Squared error is the Gaussian-likelihood equivalent, the same criterion OLS minimises.</p>
+</section>
+
+<!-- 5 GRADIENT -->
+<section class="lesson" id="gradient">
+  <div class="num">Lesson 5</div>
+  <h2>Gradient descent: walking downhill blindfolded</h2>
+  <p class="lead">A network has no formula like (XᵀX)⁻¹Xᵀy for its best weights, so it searches step by step.</p>
+  <p>At the current weights, compute the <b>gradient</b> ∇L, the direction of steepest uphill, and step the other way: <code>w ← w − η·∇L(w)</code>. The <b>learning rate η</b> is the step size. <b>Click anywhere on the map</b> to drop a starting point.</p>
+  <div class="widget">
+    <div class="pills" id="gdsurf"></div>
+    <div class="wgrid">
+      <div><canvas class="plot" id="gdcv" style="aspect-ratio:1;cursor:crosshair"></canvas></div>
+      <div>
+        <div class="pills" id="gdopt"></div>
+        <div class="sl"><span>η</span><input type="range" id="gdlr" min="-3" max="0" step="0.05" value="-1"><span class="val" id="gdlrv"></span></div>
+        <div class="sl"><span>noise</span><input type="range" id="gdnoise" min="0" max="3" step="0.1" value="0"><span class="val" id="gdnoisev"></span></div>
+        <div style="display:flex;gap:8px;margin:10px 0"><button class="btn pri" id="gdgo">▶ Run</button><button class="btn" id="gdclear">Clear paths</button></div>
+        <div class="formula" id="gdstat" style="white-space:pre-wrap"></div>
+        <p class="sub" id="gdnote" style="margin-top:10px"></p>
+      </div>
+    </div>
+  </div>
+  <div class="callout"><b>What to try</b>On the <b>narrow valley</b>, plain gradient descent zig-zags across and crawls along the floor. That is what happens with unscaled, correlated inputs (large condition number κ), and it's why we standardize. <b>Momentum</b> builds speed along the floor. On <b>two minima</b>, where you start decides where you end; adding <b>noise</b> can sometimes jump the ridge.</div>
+</section>
+
+<!-- 6 BACKPROP -->
+<section class="lesson" id="backprop">
+  <div class="num">Lesson 6</div>
+  <h2>Backpropagation, one number at a time</h2>
+  <p class="lead">Gradient descent needs ∂L/∂w for every weight. Backprop gets all of them in one backward sweep using the chain rule.</p>
+  <p>Here is a tiny network: 2 inputs, 2 tanh hidden neurons, 1 sigmoid output, with log loss. Step through one full training update. Every number is computed live, so you can change the inputs and target.</p>
+  <div class="widget">
+    <div style="display:flex;flex-wrap:wrap;gap:14px;align-items:center;font-size:13.5px">
+      <label>x₁ <input type="number" id="bx1" value="1" step="0.1" style="width:64px"></label>
+      <label>x₂ <input type="number" id="bx2" value="0.5" step="0.1" style="width:64px"></label>
+      <label>target y <select id="by"><option value="1">1</option><option value="0">0</option></select></label>
+      <label>η <input type="number" id="blr" value="0.5" step="0.1" style="width:64px"></label>
+    </div>
+    <svg class="bp-svg" id="bpsvg" viewBox="0 0 680 300"></svg>
+    <div class="bpsteps" id="bpsteps"></div>
+    <div style="display:flex;gap:8px"><button class="btn" id="bpprev">← Back</button><button class="btn pri" id="bpnext">Next step →</button></div>
+    <div class="bpexp" id="bpexp"></div>
+  </div>
+  <div class="callout"><b>The pattern to remember</b>For every weight: <b>gradient = (error δ arriving at the neuron it feeds) × (the input it carried)</b>. The error at a hidden neuron is the output error, weighted by the connection and scaled by the activation's slope: <code>δⱼ = δₒ · wⱼ · f′(zⱼ)</code>. If those slopes are small (sigmoid's is at most 0.25) and you multiply many of them, gradients <b>vanish</b>.</div>
+</section>
+
+<!-- 7 OVERFITTING -->
+<section class="lesson" id="overfitting">
+  <div class="num">Lesson 7</div>
+  <h2>Overfitting and regularization</h2>
+  <p class="lead">A big enough network can memorise its training data, noise included. The test set catches it.</p>
+  <p>Two identical networks (2 hidden layers of 8 neurons) train on the <b>same 50 noisy points</b>. The right-hand one has an <b>L2 penalty</b> λ‖w‖² added to its loss. That is ridge regression's penalty, called <b>weight decay</b> in deep learning. Watch the test loss.</p>
+  <div class="widget">
+    <div class="sl" style="grid-template-columns:120px 1fr 60px;max-width:520px"><span>L2 strength λ</span><input type="range" id="ofl" min="0" max="8" step="1" value="4"><span class="val" id="oflv"></span></div>
+    <div class="wgrid" style="margin-top:10px">
+      <div><div class="sub" style="margin-bottom:4px"><b>No regularization</b></div><canvas class="plot" id="ofa" style="aspect-ratio:1"></canvas><div class="probe" id="ofas"></div></div>
+      <div><div class="sub" style="margin-bottom:4px"><b>With L2 (weight decay)</b></div><canvas class="plot" id="ofb" style="aspect-ratio:1"></canvas><div class="probe" id="ofbs"></div></div>
+    </div>
+    <canvas class="plot" id="ofloss" style="height:130px;margin-top:10px"></canvas>
+    <div class="legend"><span><i style="background:var(--neg)"></i>No reg · test</span><span><i style="background:var(--neg);opacity:.4"></i>No reg · train</span><span><i style="background:var(--pos)"></i>L2 · test</span><span><i style="background:var(--pos);opacity:.4"></i>L2 · train</span></div>
+    <div style="display:flex;gap:8px;margin-top:10px"><button class="btn pri" id="ofgo">▶ Train</button><button class="btn" id="ofreset">New data &amp; reset</button></div>
+  </div>
+  <ul>
+    <li><b>Bias–variance:</b> more neurons and layers lower bias but raise variance. Unregularized, the train loss keeps falling while the test loss turns back up.</li>
+    <li><b>L2 (ridge)</b> shrinks all weights smoothly, giving a smoother boundary and lower variance at the cost of a little bias.</li>
+    <li><b>L1 (lasso)</b> drives weak weights to exactly zero, which removes connections.</li>
+    <li><b>Early stopping</b> halts when validation loss is lowest. It acts like regularization.</li>
+    <li>Choose λ, the size of the network and the learning rate with <b>validation data / cross-validation</b>, never with training loss.</li>
+  </ul>
+</section>
+
+<!-- GLOSSARY -->
+<section class="lesson" id="glossary">
+  <div class="num">Reference</div>
+  <h2>Glossary</h2>
+  <input class="gsearch" id="gsearch" placeholder="Search terms…">
+  <table class="gl" id="gltable"></table>
+</section>
+
+<!-- QUIZ -->
+<section class="lesson quiz" id="quiz">
+  <div class="num">Check yourself</div>
+  <h2>True or false?</h2>
+  <p>Exam-style statements. Decide, then read the justification. A good answer always says <i>why</i>.</p>
+  <div class="score" id="score"></div>
+  <div id="quizlist"></div>
+  <button class="btn" id="quizreset">Reset quiz</button>
+</section>
+</main>
+</div>
+
+<footer class="site"><div class="in">
+  <span>Neural Network Lab · built by Sahil · open source on <a href="https://github.com/sahiljangra12/neural-network-lab">GitHub</a></span>
+  <span><a href="index.html">← Back to the playground</a></span>
+</div></footer>
+
+<script type="module" src="js/learn.js"></script>
+</body>
+</html>
