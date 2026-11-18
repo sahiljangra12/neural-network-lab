@@ -3,30 +3,32 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Learn · Neural Network Lab</title>
+<meta name="theme-color" content="#03060c">
+<title>Academy · Neural Network Lab</title>
 <meta name="description" content="Interactive lessons on neural networks: the neuron, activation functions, why depth matters, gradient descent, backpropagation step by step, overfitting and regularization, plus a glossary and quiz.">
 <link rel="icon" href="img/logo.svg" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;600;700&family=Space+Grotesk:wght@400;500;600&family=Share+Tech+Mono&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="css/style.css">
-<script src="js/theme.js"></script>
+<script src="js/fx.js"></script>
 </head>
 <body>
 <header class="nav"><div class="in">
-  <a class="brand" href="index.html"><img class="logo" src="img/logo.svg" alt=""><span class="full">Neural Network Lab</span></a>
+  <a class="brand" href="index.html"><img class="logo" src="img/logo.svg" alt=""><span class="full">NEURAL NETWORK LAB<small>v2.0 · training console</small></span></a>
   <nav>
-    <a href="index.html">Playground</a>
-    <a href="index.html#challenges">Challenges</a>
-    <a href="learn.html" class="on">Learn</a>
-    <a href="#quiz" class="opt">Quiz</a>
+    <a href="index.html">Console</a>
+    <a href="index.html#challenges">Missions</a>
+    <a href="learn.html" class="on">Academy</a>
+    <a href="#quiz" class="opt">Exam</a>
   </nav>
   <div class="sp"></div>
-  <button class="iconbtn" id="themebtn" title="Toggle dark mode" aria-label="Toggle dark mode"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg></button>
+  <span class="status"><i></i>CORE ONLINE</span>
+  <button class="iconbtn" id="fxbtn" title="Toggle visual effects">FX ON</button>
 </div></header>
 
 <div class="learn">
 <aside class="toc" id="toc">
-  <b>Lessons</b>
+  <b>Academy modules</b>
   <a href="#neuron">1 · The neuron</a>
   <a href="#activations">2 · Activation functions</a>
   <a href="#depth">3 · Why hidden layers</a>
@@ -35,14 +37,14 @@
   <a href="#backprop">6 · Backpropagation</a>
   <a href="#overfitting">7 · Overfitting &amp; regularization</a>
   <a href="#glossary">Glossary</a>
-  <a href="#quiz" class="opt">Quiz</a>
+  <a href="#quiz" class="opt">Exam</a>
   <div class="prog"><i id="prog"></i></div>
 </aside>
 
 <main>
 <!-- 1 NEURON -->
 <section class="lesson" id="neuron">
-  <div class="num">Lesson 1</div>
+  <div class="num">Module 01</div>
   <h2>The neuron: a weighted vote and a squash</h2>
   <p class="lead">Every neural network, from this page to the largest language models, is built from one simple unit.</p>
   <p>A neuron takes its inputs, multiplies each by a <b>weight</b>, adds a <b>bias</b>, and passes the total through an <b>activation function</b>:</p>
@@ -67,7 +69,7 @@
 
 <!-- 2 ACTIVATIONS -->
 <section class="lesson" id="activations">
-  <div class="num">Lesson 2</div>
+  <div class="num">Module 02</div>
   <h2>Activation functions: where the bending comes from</h2>
   <p class="lead">Without a nonlinear activation, a hundred layers can do no more than one.</p>
   <p>The activation is applied to each neuron's sum. Its <b>shape</b> sets what the neuron can express, and its <b>slope (derivative)</b> sets how well a learning signal can pass back through it during training.</p>
@@ -88,7 +90,7 @@
 
 <!-- 3 DEPTH -->
 <section class="lesson" id="depth">
-  <div class="num">Lesson 3</div>
+  <div class="num">Module 03</div>
   <h2>Why hidden layers: combining lines into shapes</h2>
   <p class="lead">One neuron draws a line. A layer of neurons draws several lines. The next layer combines them.</p>
   <p>Below, three networks train on the same data at once. The first has <b>no hidden layer</b>, so it is plain logistic regression. The second has <b>4 tanh neurons</b>. The third also has 4 hidden neurons, but they are <b>linear</b>.</p>
@@ -103,7 +105,7 @@
 
 <!-- 4 LOSS -->
 <section class="lesson" id="loss">
-  <div class="num">Lesson 4</div>
+  <div class="num">Module 04</div>
   <h2>Loss: putting a number on "wrong"</h2>
   <p class="lead">Training needs one number to push down. That number is the loss.</p>
   <div class="wgrid">
@@ -127,7 +129,7 @@
 
 <!-- 5 GRADIENT -->
 <section class="lesson" id="gradient">
-  <div class="num">Lesson 5</div>
+  <div class="num">Module 05</div>
   <h2>Gradient descent: walking downhill blindfolded</h2>
   <p class="lead">A network has no formula like (XᵀX)⁻¹Xᵀy for its best weights, so it searches step by step.</p>
   <p>At the current weights, compute the <b>gradient</b> ∇L, the direction of steepest uphill, and step the other way: <code>w ← w − η·∇L(w)</code>. The <b>learning rate η</b> is the step size. <b>Click anywhere on the map</b> to drop a starting point.</p>
@@ -150,7 +152,7 @@
 
 <!-- 6 BACKPROP -->
 <section class="lesson" id="backprop">
-  <div class="num">Lesson 6</div>
+  <div class="num">Module 06</div>
   <h2>Backpropagation, one number at a time</h2>
   <p class="lead">Gradient descent needs ∂L/∂w for every weight. Backprop gets all of them in one backward sweep using the chain rule.</p>
   <p>Here is a tiny network: 2 inputs, 2 tanh hidden neurons, 1 sigmoid output, with log loss. Step through one full training update. Every number is computed live, so you can change the inputs and target.</p>
@@ -171,7 +173,7 @@
 
 <!-- 7 OVERFITTING -->
 <section class="lesson" id="overfitting">
-  <div class="num">Lesson 7</div>
+  <div class="num">Module 07</div>
   <h2>Overfitting and regularization</h2>
   <p class="lead">A big enough network can memorise its training data, noise included. The test set catches it.</p>
   <p>Two identical networks (2 hidden layers of 8 neurons) train on the <b>same 50 noisy points</b>. The right-hand one has an <b>L2 penalty</b> λ‖w‖² added to its loss. That is ridge regression's penalty, called <b>weight decay</b> in deep learning. Watch the test loss.</p>

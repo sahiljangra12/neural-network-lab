@@ -3,37 +3,40 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#03060c">
 <title>Neural Network Lab · Train a neural network in your browser</title>
 <meta name="description" content="An interactive neural network playground: build a network, train it live with backpropagation, and see what every neuron learns. With guided challenges and step-by-step lessons.">
 <link rel="icon" href="img/logo.svg" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;600;700&family=Space+Grotesk:wght@400;500;600&family=Share+Tech+Mono&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="css/style.css">
-<script src="js/theme.js"></script>
+<script src="js/fx.js"></script>
 </head>
 <body>
 <header class="nav"><div class="in">
-  <a class="brand" href="index.html"><img class="logo" src="img/logo.svg" alt=""><span class="full">Neural Network Lab</span></a>
+  <a class="brand" href="index.html"><img class="logo" src="img/logo.svg" alt=""><span class="full">NEURAL NETWORK LAB<small>v2.0 · training console</small></span></a>
   <nav>
-    <a href="index.html" class="on">Playground</a>
-    <a href="#challenges">Challenges</a>
-    <a href="learn.html">Learn</a>
-    <a href="learn.html#quiz" class="opt">Quiz</a>
+    <a href="index.html" class="on">Console</a>
+    <a href="#challenges">Missions</a>
+    <a href="learn.html">Academy</a>
+    <a href="learn.html#quiz" class="opt">Exam</a>
   </nav>
   <div class="sp"></div>
   <button class="iconbtn" id="share" title="Copy a link to this exact setup" aria-label="Copy link">⧉</button>
-  <button class="iconbtn" id="themebtn" title="Toggle dark mode" aria-label="Toggle dark mode"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg></button>
+  <span class="status"><i></i>CORE ONLINE</span>
+  <button class="iconbtn" id="fxbtn" title="Toggle visual effects">FX ON</button>
 </div></header>
 
 <section class="hero">
   <div>
-    <h1>Train a neural network. Watch it think.</h1>
-    <p>Pick a dataset, shape the network, press play. Every square is a neuron showing what it has learned so far; every line is a weight, blue for positive and orange for negative.</p>
+    <div class="kicker">&gt; SYSTEM READY_</div>
+    <h1>Build a brain. Watch it learn.<span class="caret"></span></h1>
+    <p>Choose a data source, design the neural architecture, launch training. Every glowing orb is a neuron showing what it has learned; every beam is a synapse (weight), <b style="color:var(--pos)">cyan</b> for positive, <b style="color:var(--neg)">magenta</b> for negative.</p>
   </div>
   <div class="steps3">
-    <a href="learn.html"><b>1 · Learn</b>Neurons, loss, backprop</a>
-    <a href="#challenges"><b>2 · Build</b>Solve 10 challenges</a>
-    <a href="learn.html#quiz"><b>3 · Test</b>True or false quiz</a>
+    <a href="learn.html"><b>01 · ACADEMY</b>Neurons, loss, backprop</a>
+    <a href="#challenges"><b>02 · MISSIONS</b>11 training missions</a>
+    <a href="learn.html#quiz"><b>03 · EXAM</b>True / false quiz</a>
   </div>
 </section>
 
@@ -43,7 +46,7 @@
     <button class="play" id="play" title="Play / pause (Space)" aria-label="Play"><svg id="playicon" viewBox="0 0 24 24" fill="currentColor"><path d="M7 4.5v15l13-7.5z"/></svg></button>
     <button class="roundbtn" id="step" title="Train one epoch (S)" aria-label="Step"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M5 5v14l10-7zM17 5h2.5v14H17z"/></svg></button>
   </div>
-  <div class="epoch">Epoch<b id="epoch">000,000</b></div>
+  <div class="epoch">Training cycles · epoch<b id="epoch">000,000</b></div>
   <div class="ctl"><span>Learning rate</span><select id="lr"></select></div>
   <div class="ctl"><span>Activation</span><select id="act"></select></div>
   <div class="ctl"><span>Optimizer</span><select id="opt"><option value="sgd">SGD</option><option value="momentum">Momentum</option><option value="adam">Adam</option></select></div>
@@ -61,7 +64,7 @@
   <!-- LEFT: data -->
   <div class="left">
     <div class="panel">
-      <h3>Data</h3>
+      <h3><span><span class="tagn">01</span>Data source</span></h3>
       <div class="sub" style="margin-bottom:8px">Which dataset?</div>
       <div class="dsgrid" id="dsgrid"></div>
       <div class="field"><div class="row"><span>Training data</span><span class="val" id="ratiov"></span></div><input type="range" id="ratio" min="10" max="90" step="10"></div>
@@ -70,11 +73,11 @@
       <div class="field"><button class="btn sm" id="regen">↻ Regenerate data</button></div>
     </div>
     <div class="panel">
-      <h3>How to read this</h3>
+      <h3><span><span class="tagn">i</span>Field manual</span></h3>
       <div class="sub" style="font-size:12.5px;line-height:1.55">
-        <p style="margin:0 0 6px"><b style="color:var(--pos)">Blue</b> = positive output / weight, <b style="color:var(--neg)">orange</b> = negative.</p>
-        <p style="margin:0 0 6px">Line thickness = how big the weight is. <b>Click a line</b> to edit its weight.</p>
-        <p style="margin:0 0 6px"><b>Hover a neuron</b> to show its picture on the big output map.</p>
+        <p style="margin:0 0 6px"><b style="color:var(--pos)">Cyan</b> = positive output / weight, <b style="color:var(--neg)">magenta</b> = negative.</p>
+        <p style="margin:0 0 6px">Beam thickness = how big the weight is. Moving pulses = training in progress. <b>Click a beam</b> to edit its weight.</p>
+        <p style="margin:0 0 6px"><b>Hover a neuron orb</b> to show its picture on the big output map.</p>
         <p style="margin:0"><b>Click an input</b> on the left of the network to switch that feature on or off.</p>
       </div>
     </div>
@@ -83,7 +86,7 @@
   <!-- MIDDLE: network -->
   <div class="panel">
     <div class="nethead">
-      <h3 style="margin:0">Features → hidden layers → output</h3>
+      <h3 style="margin:0"><span><span class="tagn">02</span>Neural architecture</span></h3>
       <div class="layers">
         <button class="roundbtn" id="remlayer" title="Remove a hidden layer" aria-label="Remove layer" style="width:28px;height:28px">−</button>
         <span><b id="nlayers">2</b> hidden layers</span>
@@ -97,10 +100,8 @@
   <!-- RIGHT: output -->
   <div class="right">
     <div class="panel">
-      <h3>Output <span style="display:flex;gap:12px;text-transform:none;letter-spacing:0;font-weight:400">
-        <label class="chk"><input type="checkbox" id="showTest"> Show test data</label>
-        <label class="chk"><input type="checkbox" id="discretize"> Discretize</label>
-      </span></h3>
+      <h3><span><span class="tagn">03</span>Output field</span></h3>
+      <div style="display:flex;gap:16px;margin:-4px 0 8px"><label class="chk"><input type="checkbox" id="showTest"> Show test data</label><label class="chk"><input type="checkbox" id="discretize"> Discretize</label></div>
       <div class="outbox"><canvas id="out" width="400" height="400"></canvas></div>
       <div class="axis"><span>−6</span><span>X₁ →</span><span>6</span></div>
       <div class="probe" id="probe">Hover the map to read the network's prediction at any point.</div>
@@ -113,23 +114,23 @@
         <div class="stat"><span id="acclbl2">Test accuracy</span><b id="testacc">–</b></div>
       </div>
       <canvas id="losschart"></canvas>
-      <div class="legend"><span><i style="background:var(--fg)"></i>Train</span><span><i style="background:var(--faint)"></i>Test</span><span id="lossname"></span></div>
+      <div class="legend"><span><i style="background:var(--acc)"></i>Train</span><span><i style="background:var(--faint)"></i>Test</span><span id="lossname"></span></div>
     </div>
     <div class="panel">
-      <h3>Live insight</h3>
+      <h3><span><span class="tagn">04</span>AI diagnostics</span></h3>
       <div class="insight" id="insight"><b>Press play</b>The network starts with random weights, so its output map is close to random. Press play and watch it organise itself.</div>
     </div>
   </div>
 </main>
 
 <section class="section" id="challenges">
-  <h2>Challenges</h2>
+  <h2>Training missions</h2>
   <p class="lead">Each one loads a setup and a question. They go from "why does this fail?" to "can you beat the spiral?". Each teaches one idea you'll meet in any machine learning course.</p>
   <div class="cards" id="cards"></div>
 </section>
 
 <section class="section">
-  <h2>What's going on under the hood</h2>
+  <h2>Under the hood</h2>
   <p class="lead">Everything here runs in your browser with a hand-written network, about 200 lines of JavaScript and no libraries.</p>
   <div class="guide">
     <div class="card"><div class="lvl l2">Forward pass</div><h4>Each neuron is a weighted sum plus a squash</h4><p>A neuron computes <code>a = f(w·x + b)</code>. The first hidden layer can only draw straight lines. Each later layer combines those lines into curves, rings and spirals.</p></div>
@@ -146,6 +147,7 @@
   <span>Inspired by <a href="https://playground.tensorflow.org">TensorFlow Playground</a>. All code here is written from scratch.</span>
 </div></footer>
 
+<div id="boot"><div class="term"><div class="logo-big">NEURAL NETWORK LAB</div><div class="lines"></div><div class="bar2"><i></i></div><div class="skip">click to skip</div></div></div>
 <div class="tooltip" id="tip"></div>
 <div class="wedit" id="wedit"><div style="margin-bottom:6px;color:var(--mut)" id="weditlbl">Weight</div><input id="weditin" type="number" step="0.1"> <button class="btn sm" id="weditok">Set</button></div>
 
