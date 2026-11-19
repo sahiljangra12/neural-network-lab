@@ -1,7 +1,7 @@
-import { CLASS_DATASETS, REG_DATASETS, FEATURES, makeData } from './data.js?v=202611182013';
-import { Network, ACTIVATIONS } from './nn.js?v=202611182013';
-import { colormap, rebuildColormap } from './colors.js?v=202611182013';
-import { CH } from './missions.js?v=202611182013';
+import { CLASS_DATASETS, REG_DATASETS, FEATURES, makeData } from './data.js?v=202611182231';
+import { Network, ACTIVATIONS } from './nn.js?v=202611182231';
+import { colormap, rebuildColormap } from './colors.js?v=202611182231';
+import { CH } from './missions.js?v=202611182231';
 
 const $ = id => document.getElementById(id);
 const LRS = [0.00001, 0.0001, 0.001, 0.003, 0.01, 0.03, 0.1, 0.3, 1, 3, 10];
@@ -201,14 +201,19 @@ function buildNetwork() {
   [...netEl.querySelectorAll('.node,.featlabel,.colhead')].forEach(e => e.remove());
   linksEl.innerHTML = '';
   nodeEls = []; linkEls = [];
-  const width = Math.max(netEl.parentElement.clientWidth, 120 + (S.layers.length + 1) * 90);
-  const nCols = S.layers.length + 2, left = 74, right = width - NODE - 14;
-  const xs = Array.from({ length: nCols }, (_, c) => left + (right - left) * c / (nCols - 1));
+  const appMode = matchMedia('(min-width: 1100px) and (min-height: 600px)').matches;
+  const narrow = netEl.parentElement.clientWidth < 520;
   const counts = [FEATURES.length, ...S.layers, 1];
   const maxN = Math.max(...counts);
-  const availH = netEl.parentElement.clientHeight;
-  VGAP = availH > 150 ? Math.max(26, Math.min(60, Math.floor((availH - HEAD - 6) / maxN))) : 54;
+  if (appMode) {
+    const availH = netEl.parentElement.clientHeight;
+    VGAP = availH > 150 ? Math.max(26, Math.min(60, Math.floor((availH - HEAD - 6) / maxN))) : 54;
+  } else VGAP = narrow ? 42 : 54;
   NODE = VGAP < 32 ? 22 : VGAP < 38 ? 26 : VGAP < 46 ? 32 : VGAP < 52 ? 36 : 40;
+  const nCols = S.layers.length + 2, left = narrow ? 64 : 74, colGap = narrow ? 58 : 90;
+  const width = Math.max(netEl.parentElement.clientWidth, left + (nCols - 1) * colGap + NODE + 14);
+  const right = width - NODE - 14;
+  const xs = Array.from({ length: nCols }, (_, c) => left + (right - left) * c / (nCols - 1));
   const height = HEAD + maxN * VGAP;
   netEl.style.height = height + 'px'; netEl.style.width = width + 'px';
   linksEl.setAttribute('width', width); linksEl.setAttribute('height', height);
@@ -245,7 +250,7 @@ function buildNetwork() {
     n.d.dataset.l = 0; n.d.dataset.j = r;
     nodeEls[0].push(n);
     const lab = document.createElement('div'); lab.className = 'featlabel';
-    lab.style.left = (xs[0] - 66) + 'px'; lab.style.top = (ys[0][r] + NODE / 2 - 9) + 'px'; lab.textContent = f.label;
+    lab.style.left = (xs[0] - 62) + 'px'; lab.style.width = '56px'; lab.style.top = (ys[0][r] + NODE / 2 - 9) + 'px'; lab.textContent = f.label;
     netEl.appendChild(lab);
   });
   for (let l = 1; l < net.sizes.length; l++) {
@@ -257,16 +262,17 @@ function buildNetwork() {
     }
   }
   // column heads
-  const head = (c, html) => { const h = document.createElement('div'); h.className = 'colhead'; h.style.left = (xs[c] - 30) + 'px'; h.style.width = (NODE + 60) + 'px'; h.style.top = '0px'; h.innerHTML = html; netEl.appendChild(h); return h; };
-  head(0, '<div style="height:25px"></div>Features');
+  const hw = narrow ? colGap - 4 : NODE + 60;
+  const head = (c, html) => { const h = document.createElement('div'); h.className = 'colhead'; h.style.left = (xs[c] + NODE / 2 - hw / 2) + 'px'; h.style.width = hw + 'px'; h.style.top = '0px'; h.innerHTML = html; netEl.appendChild(h); return h; };
+  head(0, `<div style="height:25px"></div>${narrow ? 'Inputs' : 'Features'}`);
   S.layers.forEach((n, li) => {
-    const h = head(li + 1, `<div class="pm"><button data-a="-" data-l="${li}" title="Remove a neuron">−</button><button data-a="+" data-l="${li}" title="Add a neuron">+</button></div>${n} neuron${n > 1 ? 's' : ''}`);
+    const h = head(li + 1, `<div class="pm"><button data-a="-" data-l="${li}" title="Remove a neuron">−</button><button data-a="+" data-l="${li}" title="Add a neuron">+</button></div>${narrow ? n : `${n} neuron${n > 1 ? 's' : ''}`}`);
     h.querySelectorAll('button').forEach(b => b.onclick = () => {
       const k = +b.dataset.l; S.layers[k] = Math.max(1, Math.min(MAX_NEURONS, S.layers[k] + (b.dataset.a === '+' ? 1 : -1)));
       structureChanged();
     });
   });
-  head(nCols - 1, '<div style="height:25px"></div>Output');
+  head(nCols - 1, `<div style="height:25px"></div>${narrow ? 'Out' : 'Output'}`);
   $('nlayers').textContent = S.layers.length;
   $('nparams').textContent = `${net.weightCount()} parameters`;
 }
@@ -329,14 +335,16 @@ netEl.addEventListener('click', e => {
 });
 document.addEventListener('click', e => { if (!e.target.closest('#wedit') && !e.target.closest('path')) $('wedit').style.display = 'none'; });
 
-out.addEventListener('mousemove', e => {
+function probe(e) {
   const r = out.getBoundingClientRect();
   const x = -6 + (e.clientX - r.left) / r.width * 12, y = 6 - (e.clientY - r.top) / r.height * 12;
   const p = net.forward(activeFeatures().map(f => f.f(x, y)));
   $('probe').innerHTML = S.problem === 'class'
     ? `X₁ = ${x.toFixed(2)}, X₂ = ${y.toFixed(2)} → P(black) = <b>${p.toFixed(3)}</b>, predicts <b style="color:var(${p >= .5 ? '--fg' : '--neg'})">${p >= .5 ? 'black' : 'red'}</b>`
     : `X₁ = ${x.toFixed(2)}, X₂ = ${y.toFixed(2)} → ŷ = <b>${p.toFixed(3)}</b>`;
-});
+}
+out.addEventListener('pointermove', probe);
+out.addEventListener('pointerdown', probe);
 
 /* ---------------- insight engine ---------------- */
 const NONLINEAR = ['circle', 'xor', 'spiral', 'checker', 'moons'];
@@ -375,6 +383,7 @@ function render(full) {
   updateNetwork();
   drawOutput();
   drawLossChart();
+  if ($('fabep')) { $('fabep').textContent = 'Epoch ' + epoch; const a = S.problem === 'class' ? net.accuracy(test.length ? test : train) : null; $('fabacc').textContent = a === null ? `loss ${isFinite(lastTestLoss) ? lastTestLoss.toFixed(3) : '–'}` : `test acc ${(a * 100).toFixed(1)}%`; }
   $('epoch').textContent = String(epoch).padStart(6, '0').replace(/\B(?=(\d{3})+(?!\d))/g, ',');
   const f = v => isFinite(v) ? v.toFixed(3) : '∞';
   $('trainloss').textContent = f(lastTrainLoss); $('testloss').textContent = test.length ? f(lastTestLoss) : '–';
@@ -412,6 +421,7 @@ let lastHover = null;
 /* ---------------- controls ---------------- */
 function setPlaying(p) {
   playing = p;
+  const fp = $('fabplay'); if (fp) fp.innerHTML = p ? '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M6 4h4v16H6zM14 4h4v16h-4z"/></svg>' : '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M7 4.5v15l13-7.5z"/></svg>';
   netEl.classList.toggle('training', p); $('play').classList.toggle('on', p);
   $('playicon').innerHTML = p ? '<path d="M6 4h4v16H6zM14 4h4v16h-4z"/>' : '<path d="M7 4.5v15l13-7.5z"/>';
   $('play').setAttribute('aria-label', p ? 'Pause' : 'Play');
@@ -448,6 +458,9 @@ $('showTest').onchange = e => { S.showTest = e.target.checked; render(true); wri
 $('discretize').onchange = e => { S.discretize = e.target.checked; render(true); writeHash(); };
 $('regen').onclick = () => { S.seed = Math.floor(Math.random() * 1e6); dataChanged(); };
 $('play').onclick = () => setPlaying(!playing);
+if ($('fabplay')) $('fabplay').onclick = () => setPlaying(!playing);
+if (matchMedia('(hover: none)').matches) { const t = document.querySelector('.nettip'); if (t) t.textContent = 'Tap a neuron to inspect it · tap a line to edit its weight · tap an input to switch it on/off'; $('probe').textContent = 'Tap the map to read the network\'s prediction at any point.'; }
+document.addEventListener('touchstart', e => { if (!e.target.closest('#net') && !e.target.closest('#wedit')) { hover = null; hideTip(); } }, { passive: true });
 $('step').onclick = () => { setPlaying(false); trainEpoch(); render(true); };
 $('reset').onclick = () => { newNet(); render(true); };
 $('addlayer').onclick = () => { if (S.layers.length < MAX_LAYERS) { S.layers.push(2); structureChanged(); } };
