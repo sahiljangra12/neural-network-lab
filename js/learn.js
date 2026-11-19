@@ -32,7 +32,7 @@ function points(ctx, W, H, pts, R = 6, r = 3) {
   for (const p of pts) {
     const c = colormap(p.label);
     ctx.beginPath(); ctx.arc((p.x + R) / (2 * R) * W, (R - p.y) / (2 * R) * H, r, 0, 7);
-    ctx.fillStyle = `rgb(${c})`; ctx.fill(); ctx.strokeStyle = '#fff'; ctx.lineWidth = 1; ctx.stroke();
+    ctx.fillStyle = `rgb(${c})`; ctx.fill(); ctx.strokeStyle = 'rgba(0,0,0,.8)'; ctx.lineWidth = 1; ctx.stroke();
   }
 }
 function pills(el, items, cur, onPick) {
@@ -178,7 +178,7 @@ const SURF = {
   banana: { n: 'Curved valley', f: (x, y) => 0.15 * (1 - x) ** 2 + 2 * (y - 0.35 * x * x) ** 2, start: [-2.5, -1] },
 };
 let surf = 'valley', gdOpt = 'sgd', gdRuns = [], gdImg = null, gdStart = SURF.valley.start.slice();
-const GDCOL = ['--neg', '--pos', '--ok', '--bad', '--warn'];
+const GDCOL = ['--neg', '--fg', '--warn', '--ok', '--mut'];
 pills($('gdsurf'), Object.entries(SURF).map(([k, v]) => [k, v.n]), surf, k => { surf = k; gdStart = SURF[k].start.slice(); gdRuns = []; gdImg = null; launchGD(); });
 pills($('gdopt'), [['sgd', 'Gradient descent'], ['momentum', 'Momentum'], ['adam', 'Adam']], gdOpt, k => { gdOpt = k; });
 const lrv = () => 10 ** +$('gdlr').value;
@@ -223,7 +223,7 @@ function drawGD() {
     let lo = Infinity, hi = -Infinity;
     for (const row of v) for (let i = 0; i < row.length; i++) { row[i] = Math.log(row[i] - min + 0.03); lo = Math.min(lo, row[i]); hi = Math.max(hi, row[i]); }
     const dark = document.documentElement.getAttribute('data-theme') === 'dark';
-    const base = dark ? [23, 27, 33] : [255, 255, 255], tint = [8, 119, 189];
+    const base = [6, 6, 6], tint = [150, 165, 185];
     const cw = W / res, ch = H / res;
     for (let j = 0; j < res; j++) for (let i = 0; i < res; i++) {
       const t = 1 - (v[j][i] - lo) / (hi - lo), m = 0.06 + 0.34 * t;
@@ -231,7 +231,7 @@ function drawGD() {
       o.fillRect(i * cw, j * ch, cw + 0.6, ch + 0.6);
     }
     // marching squares contour lines
-    o.strokeStyle = dark ? 'rgba(120,180,230,.55)' : 'rgba(8,119,189,.45)'; o.lineWidth = 1;
+    o.strokeStyle = 'rgba(255,255,255,.28)'; o.lineWidth = 1;
     const NL = 16;
     for (let k = 1; k < NL; k++) {
       const L = lo + (hi - lo) * k / NL; o.beginPath();

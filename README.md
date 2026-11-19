@@ -2,9 +2,9 @@
 
 **Live site:** https://sahiljangra12.github.io/neural-network-lab/
 
-A sci-fi training console for neural networks. Design a network, launch training, and watch every neuron learn in real time, with signal pulses flowing along the synapses. It includes guided training missions and an academy of interactive lessons.
+A mission-control-style training console for neural networks. Design a network, launch training, and watch every neuron learn in real time. It includes guided missions and an academy of interactive lessons.
 
-**Look and feel:** a deep-space HUD with a live neural-constellation background, glowing orb neurons, cyan (+) and magenta (−) signals, a boot sequence, and scanlines. Toggle the effects with **FX**. They are off automatically when your system asks for reduced motion.
+**Look and feel:** a black, minimal aerospace-style interface: condensed uppercase type, thin rules, a quiet starfield and a short launch countdown. White means positive and red means negative.
 
 ## Console (`index.html`)
 - **8 datasets:** six classification (circle, XOR, Gaussian, spiral, two moons, checkerboard) and two regression (plane, multi-Gaussian). You can set the noise, the train/test split and the batch size.

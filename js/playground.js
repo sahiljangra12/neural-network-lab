@@ -147,7 +147,7 @@ function drawOutput() {
       const c = colormap(S.problem === 'class' ? p.label : p.label);
       ctx.beginPath(); ctx.arc(P(p.x), Q(p.y), r, 0, 7);
       ctx.fillStyle = `rgb(${c[0]},${c[1]},${c[2]})`; ctx.fill();
-      ctx.lineWidth = (isTest ? 1.8 : 1) * dpr; ctx.strokeStyle = isTest ? '#ffe066' : 'rgba(255,255,255,.85)'; ctx.stroke();
+      ctx.lineWidth = (isTest ? 1.8 : 1) * dpr; ctx.strokeStyle = isTest ? '#8a96a3' : 'rgba(0,0,0,.8)'; ctx.stroke();
     }
   };
   if (!hover) { drawPts(train, false); if (S.showTest) drawPts(test, true); }
@@ -175,7 +175,7 @@ function drawLossChart() {
     ctx.stroke();
   };
   line(hist.test, css.getPropertyValue('--faint').trim(), 1.5);
-  line(hist.train, css.getPropertyValue('--acc').trim(), 1.8);
+  line(hist.train, css.getPropertyValue('--fg').trim(), 1.6);
 }
 
 /* ---------------- network diagram ---------------- */
@@ -283,7 +283,7 @@ netEl.addEventListener('mousemove', e => {
     if (l === 0) { const f = FEATURES[j]; showTip(e, `<b>${f.label}</b>: ${f.help}<br>${S.features.includes(f.id) ? 'On' : 'Off'}. Click to switch ${S.features.includes(f.id) ? 'off' : 'on'}.`); }
     else {
       const L = net.sizes.length - 1;
-      showTip(e, `<b>${l === L ? 'Output neuron' : `Layer ${l}, neuron ${j + 1}`}</b><br><span class="mono">bias b = ${net.b[l - 1][j].toFixed(3)}</span><br>${l === L ? (S.problem === 'class' ? 'σ(w·h + b) = P(cyan). This is logistic regression on the last layer.' : 'Linear output w·h + b') : `${ACTIVATIONS[S.act].name}(w·inputs + b)`}`);
+      showTip(e, `<b>${l === L ? 'Output neuron' : `Layer ${l}, neuron ${j + 1}`}</b><br><span class="mono">bias b = ${net.b[l - 1][j].toFixed(3)}</span><br>${l === L ? (S.problem === 'class' ? 'σ(w·h + b) = P(white). This is logistic regression on the last layer.' : 'Linear output w·h + b') : `${ACTIVATIONS[S.act].name}(w·inputs + b)`}`);
     }
   } else if (p) {
     hover = null;
@@ -316,7 +316,7 @@ out.addEventListener('mousemove', e => {
   const x = -6 + (e.clientX - r.left) / r.width * 12, y = 6 - (e.clientY - r.top) / r.height * 12;
   const p = net.forward(activeFeatures().map(f => f.f(x, y)));
   $('probe').innerHTML = S.problem === 'class'
-    ? `X₁ = ${x.toFixed(2)}, X₂ = ${y.toFixed(2)} → P(cyan) = <b>${p.toFixed(3)}</b>, predicts <b style="color:var(${p >= .5 ? '--pos' : '--neg'})">${p >= .5 ? 'cyan' : 'magenta'}</b>`
+    ? `X₁ = ${x.toFixed(2)}, X₂ = ${y.toFixed(2)} → P(white) = <b>${p.toFixed(3)}</b>, predicts <b style="color:var(${p >= .5 ? '--pos' : '--neg'})">${p >= .5 ? 'white' : 'red'}</b>`
     : `X₁ = ${x.toFixed(2)}, X₂ = ${y.toFixed(2)} → ŷ = <b>${p.toFixed(3)}</b>`;
 });
 
@@ -369,7 +369,7 @@ function render(full) {
     $('acclbl').textContent = 'Zero weights'; $('testacc').textContent = net.weightCount(); $('acclbl2').textContent = 'Parameters';
   }
   $('lossname').textContent = S.problem === 'class' ? 'loss = log loss (NLL)' : 'loss = ½ squared error';
-  $('sclo').textContent = S.problem === 'class' ? 'magenta' : '−1'; $('schi').textContent = S.problem === 'class' ? 'cyan' : '1';
+  $('sclo').textContent = S.problem === 'class' ? 'red' : '−1'; $('schi').textContent = S.problem === 'class' ? 'white' : '1';
   $('scmid').textContent = S.problem === 'class' ? 'P = 0.5' : '0';
   insight();
   frameN++;
@@ -459,15 +459,15 @@ function buildDatasetPicker() {
 /* ---------------- challenges ---------------- */
 const CH = [
   { lvl: 1, title: 'Hello, neuron', desc: 'Two blobs, zero hidden layers. A single output neuron is all you need.', cfg: { dataset: 'gauss', layers: [], features: ['x1', 'x2'], lr: 0.03 },
-    mission: 'A network with <b>no hidden layers</b> is exactly logistic regression: P(cyan) = σ(w₁X₁ + w₂X₂ + b). Press play and watch the boundary settle as a straight line. <b>Question:</b> what happens to the weights if you raise the noise?' },
-  { lvl: 1, title: 'Why a straight line fails', desc: 'Same tiny model, but now the cyan points sit inside a ring of magenta.', cfg: { dataset: 'circle', layers: [], features: ['x1', 'x2'], lr: 0.03 },
+    mission: 'A network with <b>no hidden layers</b> is exactly logistic regression: P(white) = σ(w₁X₁ + w₂X₂ + b). Press play and watch the boundary settle as a straight line. <b>Question:</b> what happens to the weights if you raise the noise?' },
+  { lvl: 1, title: 'Why a straight line fails', desc: 'Same tiny model, but now the white points sit inside a ring of red.', cfg: { dataset: 'circle', layers: [], features: ['x1', 'x2'], lr: 0.03 },
     mission: 'The model can only draw <b>one straight line</b>, so it gets stuck around 50–60% accuracy no matter how long it trains. Watch the Live insight panel. <b>Goal:</b> fix it in the next two challenges in two very different ways.' },
   { lvl: 2, title: 'Fix it with features', desc: 'No hidden layer, but give the model X₁² and X₂².', cfg: { dataset: 'circle', layers: [], features: ['x1sq', 'x2sq'], lr: 0.03 },
     mission: 'X₁² + X₂² is the squared distance from the centre, so a linear boundary in these features is a <b>circle</b> in the original plane. This is <b>basis expansion</b>, the same trick as adding x² to a regression. It is still a linear model, just in richer features.' },
   { lvl: 2, title: 'Fix it with a hidden layer', desc: 'Back to raw X₁, X₂, now with 4 tanh neurons.', cfg: { dataset: 'circle', layers: [4], features: ['x1', 'x2'], act: 'tanh', lr: 0.03 },
     mission: 'Each hidden neuron draws one line. The output neuron combines them into a closed shape. <b>Hover each hidden neuron</b> to see its line. <b>Try:</b> remove neurons one at a time. What is the smallest number that still works?' },
   { lvl: 2, title: 'The XOR problem', desc: 'The classic example a single neuron cannot solve, famous since 1969.', cfg: { dataset: 'xor', layers: [4], features: ['x1', 'x2'], act: 'tanh', lr: 0.03 },
-    mission: 'Cyan where X₁ and X₂ have the same sign, magenta where they differ. No single line separates them. A hidden layer learns it. <b>Bonus:</b> switch the hidden layer off (−) and turn on the X₁X₂ feature instead. One feature solves it.' },
+    mission: 'White where X₁ and X₂ have the same sign, red where they differ. No single line separates them. A hidden layer learns it. <b>Bonus:</b> switch the hidden layer off (−) and turn on the X₁X₂ feature instead. One feature solves it.' },
   { lvl: 3, title: 'Linear activation trap', desc: 'Three hidden layers of 8 neurons, all with a linear activation. Surely that is enough?', cfg: { dataset: 'circle', layers: [8, 8, 8], features: ['x1', 'x2'], act: 'linear', lr: 0.01 },
     mission: 'It isn\'t. W₃(W₂(W₁x)) = (W₃W₂W₁)x, so <b>stacked linear layers collapse into one linear map</b> and the boundary stays straight. The nonlinearity, not the depth, gives a network its power. Switch the activation to tanh and watch it solve the problem.' },
   { lvl: 3, title: 'Learning rate too high', desc: 'Same easy problem, with a learning rate of 3.', cfg: { dataset: 'circle', layers: [4, 2], features: ['x1', 'x2'], act: 'tanh', lr: 3 },
@@ -481,9 +481,9 @@ const CH = [
   { lvl: 2, title: 'Regression: fit a surface', desc: 'Predict a continuous value instead of a class.', cfg: { problem: 'reg', regDataset: 'multigauss', layers: [8, 6], features: ['x1', 'x2'], act: 'tanh', lr: 0.03 },
     mission: 'Now the output neuron is <b>linear</b> and the loss is squared error, like OLS but with learned features. The colour shows the predicted value. Hover the hidden neurons: each is a bump or ridge that the output adds together.' },
 ];
-const LVL = ['', 'Rank I · Cadet', 'Rank II · Core idea', 'Rank III · Hazard', 'Rank IV · Boss'];
+const LVL = ['', 'Phase 1 · Fundamentals', 'Phase 2 · Core concept', 'Phase 3 · Anomaly', 'Phase 4 · Final'];
 function buildCards() {
-  $('cards').innerHTML = CH.map((c, i) => `<div class="card"><div class="lvl l${c.lvl}">${LVL[c.lvl]} · #${i + 1}</div><h4>${c.title}</h4><p>${c.desc}</p><button class="btn sm pri" data-ch="${i}">Launch mission ▸</button></div>`).join('');
+  $('cards').innerHTML = CH.map((c, i) => `<div class="card"><div class="lvl l${c.lvl}">${LVL[c.lvl]} · #${i + 1}</div><h4>${c.title}</h4><p>${c.desc}</p><button class="btn sm pri" data-ch="${i}">Launch</button></div>`).join('');
   $('cards').querySelectorAll('[data-ch]').forEach(b => b.onclick = () => loadChallenge(+b.dataset.ch));
 }
 function loadChallenge(i) {
