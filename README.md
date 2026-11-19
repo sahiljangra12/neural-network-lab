@@ -28,7 +28,7 @@ A mission-control-style training console for neural networks. Design a network, 
 8. **Glossary** (searchable) and a **16-question true/false quiz** with justifications.
 
 ## Technical report
-**[Read the technical report (PDF)](report/neural-network-lab-technical-report.pdf)**: 13 pages covering the engine's equations, the system design and a reproducible evaluation (gradient check, mission benchmarks, model capacity, overfitting with L2, learning-rate sweep). Every number, table and figure is generated from the site's own code:
+**[Read the technical report (PDF)](report/neural-network-lab-technical-report.pdf)**: 14 pages covering the engine's equations, the system design and a reproducible evaluation (gradient check, mission benchmarks, model capacity, overfitting with L2, learning-rate sweep). Every number, table and figure is generated from the site's own code:
 
 ```bash
 node tools/benchmark.mjs      # runs the experiments, writes paper/results.json, stats.tex and tables
