@@ -6,7 +6,7 @@ const $ = id => document.getElementById(id);
 const LRS = [0.00001, 0.0001, 0.001, 0.003, 0.01, 0.03, 0.1, 0.3, 1, 3, 10];
 const REGRATES = [0, 0.001, 0.003, 0.01, 0.03, 0.1, 0.3, 1, 3, 10];
 const N_POINTS = 500, GRID = 50, MAX_LAYERS = 6, MAX_NEURONS = 8;
-const NODE = 40, VGAP = 54, HEAD = 56;
+let NODE = 40, VGAP = 54; const HEAD = 52;
 
 const DEFAULT = {
   problem: 'class', dataset: 'circle', regDataset: 'plane', lr: 0.03, act: 'tanh', opt: 'sgd',
@@ -160,7 +160,7 @@ function drawOutput() {
 }
 
 function drawLossChart() {
-  const c = $('losschart'), dpr = window.devicePixelRatio || 1, w = c.clientWidth, h = 90;
+  const c = $('losschart'), dpr = window.devicePixelRatio || 1, w = c.clientWidth, h = c.clientHeight || 90;
   c.width = w * dpr; c.height = h * dpr;
   const ctx = c.getContext('2d'); ctx.scale(dpr, dpr);
   const all = hist.train.concat(hist.test).filter(isFinite);
@@ -191,10 +191,13 @@ function buildNetwork() {
   const xs = Array.from({ length: nCols }, (_, c) => left + (right - left) * c / (nCols - 1));
   const counts = [FEATURES.length, ...S.layers, 1];
   const maxN = Math.max(...counts);
+  const availH = netEl.parentElement.clientHeight;
+  VGAP = availH > 200 ? Math.max(30, Math.min(60, Math.floor((availH - HEAD - 6) / maxN))) : 54;
+  NODE = VGAP < 38 ? 26 : VGAP < 46 ? 32 : VGAP < 52 ? 36 : 40;
   const height = HEAD + maxN * VGAP;
   netEl.style.height = height + 'px'; netEl.style.width = width + 'px';
   linksEl.setAttribute('width', width); linksEl.setAttribute('height', height);
-  const ys = counts.map((n, c) => Array.from({ length: n }, (_, j) => c === counts.length - 1 ? HEAD + (maxN * VGAP - VGAP) / 2 : HEAD + j * VGAP));
+  const ys = counts.map((n, c) => Array.from({ length: n }, (_, j) => HEAD + (c === 0 ? 0 : (maxN - n) * VGAP / 2) + j * VGAP));
   layout = { xs, ys };
 
   // links (draw first so they sit beneath nodes)
@@ -217,7 +220,7 @@ function buildNetwork() {
   // nodes
   const mk = (c, r, cls) => {
     const d = document.createElement('div'); d.className = 'node' + (cls ? ' ' + cls : '');
-    d.style.left = xs[c] + 'px'; d.style.top = ys[c][r] + 'px';
+    d.style.left = xs[c] + 'px'; d.style.top = ys[c][r] + 'px'; d.style.width = d.style.height = NODE + 'px';
     const cv = document.createElement('canvas'); cv.width = cv.height = GRID; d.appendChild(cv);
     netEl.appendChild(d); return { d, cv };
   };
@@ -227,7 +230,7 @@ function buildNetwork() {
     n.d.dataset.l = 0; n.d.dataset.j = r;
     nodeEls[0].push(n);
     const lab = document.createElement('div'); lab.className = 'featlabel';
-    lab.style.left = (xs[0] - 66) + 'px'; lab.style.top = (ys[0][r] + 11) + 'px'; lab.textContent = f.label;
+    lab.style.left = (xs[0] - 66) + 'px'; lab.style.top = (ys[0][r] + NODE / 2 - 9) + 'px'; lab.textContent = f.label;
     netEl.appendChild(lab);
   });
   for (let l = 1; l < net.sizes.length; l++) {
@@ -363,10 +366,10 @@ function render(full) {
   if (S.problem === 'class') {
     const a1 = net.accuracy(train), a2 = net.accuracy(test);
     $('trainacc').textContent = (a1 * 100).toFixed(1) + '%'; $('testacc').textContent = a2 === null ? '–' : (a2 * 100).toFixed(1) + '%';
-    $('acclbl').textContent = 'Train accuracy'; $('acclbl2').textContent = 'Test accuracy';
+    $('acclbl').textContent = 'Train acc.'; $('acclbl2').textContent = 'Test acc.';
   } else {
     $('trainacc').textContent = net.W.length ? net.W.reduce((s, L) => s + L.flat().filter(w => Math.abs(w) < 1e-3).length, 0) : '–';
-    $('acclbl').textContent = 'Zero weights'; $('testacc').textContent = net.weightCount(); $('acclbl2').textContent = 'Parameters';
+    $('acclbl').textContent = 'Zero wts'; $('testacc').textContent = net.weightCount(); $('acclbl2').textContent = 'Params';
   }
   $('lossname').textContent = S.problem === 'class' ? 'loss = log loss (NLL)' : 'loss = ½ squared error';
   $('sclo').textContent = S.problem === 'class' ? 'red' : '−1'; $('schi').textContent = S.problem === 'class' ? 'white' : '1';
@@ -491,11 +494,11 @@ function loadChallenge(i) {
   S = Object.assign(clone(DEFAULT), clone(c.cfg));
   syncControls(); genData(); structureChanged();
   $('missiontext').innerHTML = `<b>Mission ${String(i + 1).padStart(2, '0')}: ${c.title}</b><br>${c.mission}`;
-  $('mission').classList.add('show');
+  $('mission').classList.add('show'); document.body.classList.add('mission-on'); setTimeout(() => { buildNetwork(); render(true); }, 50);
   window.scrollTo({ top: 0, behavior: 'smooth' });
   setPlaying(true);
 }
-$('missionclose').onclick = () => $('mission').classList.remove('show');
+$('missionclose').onclick = () => { $('mission').classList.remove('show'); document.body.classList.remove('mission-on'); setTimeout(() => { buildNetwork(); render(true); }, 50); };
 
 /* ---------------- boot ---------------- */
 window.addEventListener('themechange', () => { rebuildColormap(); buildDatasetPicker(); render(true); });

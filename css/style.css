@@ -278,3 +278,66 @@ table.gl td:first-child { width: 220px; font-family: var(--display); font-weight
   .controls { gap: 12px 16px; }
   .lesson h2 { font-size: 28px; }
 }
+
+/* ---------- Single-screen console layout ---------- */
+.nettip { font-family: var(--mono); font-size: 11px; color: var(--faint); margin: 2px 0 6px; letter-spacing: .02em; }
+.mid { display: flex; flex-direction: column; gap: 18px; min-width: 0; }
+.tele .stat span { white-space: nowrap; }
+.tele .stats { margin: 0; }
+.chartbox { display: flex; flex-direction: column; min-width: 0; }
+.chartbox h3 { margin: 0 0 6px !important; font-size: 12.5px !important; flex-wrap: wrap; }
+.chartbox .legend { font-size: 10.5px; letter-spacing: .02em; text-transform: none; font-weight: 400; }
+#losschart { flex: 1; min-height: 70px; margin-top: 0; }
+.left { display: flex; flex-direction: column; gap: 18px; min-width: 0; }
+.left .panel + .panel { margin-top: 0; }
+:root { --map: clamp(240px, min(calc(100vh - 400px), 33vw), 620px); }
+body.mission-on { --map: clamp(200px, min(calc(100vh - 485px), 33vw), 600px); }
+
+@media (min-width: 1100px) and (min-height: 600px) {
+  .nav .in { height: 64px; padding-top: 0; padding-bottom: 0; }
+  .nav nav a.on::after { bottom: -20px; }
+  .app { height: calc(100vh - 65px); display: flex; flex-direction: column; overflow: hidden; }
+  .topbar, .mission, .pg { width: 100%; max-width: 1880px; }
+  .nav .in { max-width: 1880px; }
+  .topbar { margin-top: 12px; flex: none; }
+  .controls { padding: 8px 16px; gap: 8px 22px; }
+  .play { width: 44px; height: 44px; }
+  .roundbtn { width: 32px; height: 32px; }
+  .epoch b { font-size: 22px; }
+  .mission { flex: none; }
+  .mission .bar { margin-top: 10px; padding: 8px 14px; }
+  .mission .bar .t { font-size: 13.5px; line-height: 1.45; }
+  .mission .bar .t > b:first-child { font-size: 15px; }
+  .pg { flex: 1; min-height: 0; width: 100%; margin: 12px auto 12px; gap: 12px;
+        grid-template-columns: 236px minmax(0, 1fr) calc(var(--map) + 34px); grid-template-rows: minmax(0, 1fr); align-items: stretch; }
+  .panel { padding: 12px 15px; }
+  .panel h3 { margin-bottom: 10px; font-size: 13px; }
+  .field { margin-top: 10px; }
+  .left { gap: 12px; min-height: 0; overflow: auto; }
+  .left .diag { flex: 1; }
+  .mid { gap: 12px; min-height: 0; }
+  .netpanel { flex: 1; min-height: 0; display: flex; flex-direction: column; }
+  .netwrap { flex: 1; min-height: 0; overflow: auto; }
+  .net { min-height: 0; }
+  .tele { flex: none; padding: 8px 12px; display: block; }
+  .tele .stats { grid-template-columns: repeat(4, 1fr); }
+  .outpanel { display: flex; flex-direction: column; }
+  .outpanel .chartbox { flex: 1; min-height: 70px; margin-top: 10px; }
+  #losschart { min-height: 40px; }
+  .tele .stat { padding: 3px 10px; }
+  .tele .stat span { font-size: 10px; letter-spacing: .14em; }
+  .tele .stat b { font-size: 16px; line-height: 1.3; }
+  .right { min-height: 0; overflow: auto; }
+  .right .panel { height: 100%; }
+  #out { width: var(--map); }
+  .insight { font-size: 13px; }
+  .outpanel .probe { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .dsgrid { gap: 5px; }
+}
+@media (max-width: 1099px), (max-height: 599px) {
+  .tele .stats { grid-template-columns: repeat(4, 1fr); }
+  .chartbox { margin-top: 12px; }
+  #losschart { height: 90px; flex: none; }
+  .pg .right { display: block; }
+}
+@media (max-width: 860px) { .tele .stats { grid-template-columns: 1fr 1fr; } }

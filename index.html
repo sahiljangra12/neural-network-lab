@@ -27,19 +27,8 @@
   <button class="iconbtn" id="fxbtn" title="Toggle visual effects">FX ON</button>
 </div></header>
 
-<section class="hero">
-  <div>
-    <div class="kicker">NEURAL NETWORK LAB — TRAINING CONSOLE</div>
-    <h1>Train a neural network</h1>
-    <p>Choose the data, design the architecture, launch training. Each circle is a neuron showing what it has learned. Each line is a weight: white for positive, <span style="color:var(--neg)">red</span> for negative.</p>
-  </div>
-  <div class="steps3">
-    <a href="learn.html"><b>01 Academy</b>Neurons, loss, backprop</a>
-    <a href="#challenges"><b>02 Missions</b>11 guided missions</a>
-    <a href="learn.html#quiz"><b>03 Exam</b>True / false quiz</a>
-  </div>
-</section>
 
+<div class="app">
 <div class="topbar"><div class="controls">
   <div class="runctl">
     <button class="roundbtn" id="reset" title="Reset the network (R)" aria-label="Reset"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M3 12a9 9 0 1 0 3-6.7"/><path d="M3 4v5h5"/></svg></button>
@@ -72,19 +61,15 @@
       <div class="field"><div class="row"><span>Batch size</span><span class="val" id="batchv"></span></div><input type="range" id="batch" min="1" max="30" step="1"></div>
       <div class="field"><button class="btn sm" id="regen">↻ Regenerate data</button></div>
     </div>
-    <div class="panel">
-      <h3><span><span class="tagn">i</span>Field manual</span></h3>
-      <div class="sub" style="font-size:12.5px;line-height:1.55">
-        <p style="margin:0 0 6px"><b>White</b> = positive output / weight, <b style="color:var(--neg)">red</b> = negative.</p>
-        <p style="margin:0 0 6px">Line thickness = how big the weight is. Moving dots = training in progress. <b>Click a line</b> to edit its weight.</p>
-        <p style="margin:0 0 6px"><b>Hover a neuron</b> to show its picture on the big output map.</p>
-        <p style="margin:0"><b>Click an input</b> on the left of the network to switch that feature on or off.</p>
-      </div>
+    <div class="panel diag">
+      <h3><span><span class="tagn">05</span>Diagnostics</span></h3>
+      <div class="insight" id="insight"><b>Press play</b>The network starts with random weights, so its output map is close to random. Press play and watch it organise itself.</div>
     </div>
   </div>
 
-  <!-- MIDDLE: network -->
-  <div class="panel">
+  <!-- MIDDLE: network + telemetry -->
+  <div class="mid">
+  <div class="panel netpanel">
     <div class="nethead">
       <h3 style="margin:0"><span><span class="tagn">02</span>Neural architecture</span></h3>
       <div class="layers">
@@ -94,12 +79,22 @@
         <span class="sub" id="nparams" style="margin-left:8px"></span>
       </div>
     </div>
+    <div class="nettip">Hover a neuron to inspect it · click a line to edit its weight · click an input to switch it on/off</div>
     <div class="netwrap"><div class="net" id="net"><svg class="links" id="links"></svg></div></div>
+  </div>
+  <div class="panel tele">
+    <div class="stats">
+        <div class="stat"><span>Train loss</span><b id="trainloss">–</b></div>
+        <div class="stat"><span>Test loss</span><b id="testloss">–</b></div>
+        <div class="stat"><span id="acclbl">Train acc.</span><b id="trainacc">–</b></div>
+        <div class="stat"><span id="acclbl2">Test acc.</span><b id="testacc">–</b></div>
+    </div>
+  </div>
   </div>
 
   <!-- RIGHT: output -->
   <div class="right">
-    <div class="panel">
+    <div class="panel outpanel">
       <h3><span><span class="tagn">03</span>Output field</span></h3>
       <div style="display:flex;gap:16px;margin:-4px 0 8px"><label class="chk"><input type="checkbox" id="showTest"> Show test data</label><label class="chk"><input type="checkbox" id="discretize"> Discretize</label></div>
       <div class="outbox"><canvas id="out" width="400" height="400"></canvas></div>
@@ -107,21 +102,24 @@
       <div class="probe" id="probe">Hover the map to read the network's prediction at any point.</div>
       <div class="scale"></div>
       <div class="scalelbl"><span id="sclo">−1</span><span id="scmid">0</span><span id="schi">1</span></div>
-      <div class="stats">
-        <div class="stat"><span>Train loss</span><b id="trainloss">–</b></div>
-        <div class="stat"><span>Test loss</span><b id="testloss">–</b></div>
-        <div class="stat"><span id="acclbl">Train accuracy</span><b id="trainacc">–</b></div>
-        <div class="stat"><span id="acclbl2">Test accuracy</span><b id="testacc">–</b></div>
-      </div>
-      <canvas id="losschart"></canvas>
-      <div class="legend"><span><i style="background:var(--fg)"></i>Train</span><span><i style="background:var(--faint)"></i>Test</span><span id="lossname"></span></div>
-    </div>
-    <div class="panel">
-      <h3><span><span class="tagn">04</span>Diagnostics</span></h3>
-      <div class="insight" id="insight"><b>Press play</b>The network starts with random weights, so its output map is close to random. Press play and watch it organise itself.</div>
+      <div class="chartbox"><h3><span><span class="tagn">04</span>Loss</span><span class="legend" style="margin:0"><span><i style="background:var(--fg)"></i>Train</span><span><i style="background:var(--faint)"></i>Test</span><span id="lossname" hidden></span></span></h3><canvas id="losschart"></canvas></div>
     </div>
   </div>
 </main>
+</div>
+
+<section class="hero" id="about">
+  <div>
+    <div class="kicker">NEURAL NETWORK LAB — TRAINING CONSOLE</div>
+    <h1>Train a neural network</h1>
+    <p>Choose the data, design the architecture, launch training. Each circle is a neuron showing what it has learned. Each line is a weight: white for positive, <span style="color:var(--neg)">red</span> for negative.</p>
+  </div>
+  <div class="steps3">
+    <a href="learn.html"><b>01 Academy</b>Neurons, loss, backprop</a>
+    <a href="#challenges"><b>02 Missions</b>11 guided missions</a>
+    <a href="learn.html#quiz"><b>03 Exam</b>True / false quiz</a>
+  </div>
+</section>
 
 <section class="section" id="challenges">
   <h2>Training missions</h2>
