@@ -161,23 +161,37 @@ function drawOutput() {
 }
 
 function drawLossChart() {
-  const c = $('losschart'), dpr = window.devicePixelRatio || 1, w = c.clientWidth, h = c.clientHeight || 90;
+  const c = $('losschart'), dpr = window.devicePixelRatio || 1, w = c.clientWidth, h = c.clientHeight || 160;
+  if (!w || !h) return;
   c.width = w * dpr; c.height = h * dpr;
   const ctx = c.getContext('2d'); ctx.scale(dpr, dpr);
+  const css = getComputedStyle(document.documentElement), cv = n => css.getPropertyValue(n).trim();
+  const L = 44, B = 20, T = 6, Rm = 8, pw = w - L - Rm, ph = h - T - B;
   const all = hist.train.concat(hist.test).filter(isFinite);
-  const max = Math.max(0.05, ...all.slice(-400)) * 1.05;
-  const css = getComputedStyle(document.documentElement);
-  ctx.strokeStyle = css.getPropertyValue('--line'); ctx.lineWidth = 1;
-  ctx.beginPath(); ctx.moveTo(0, h - .5); ctx.lineTo(w, h - .5); ctx.stroke();
+  const max = niceMax(Math.max(0.05, ...all));
+  ctx.font = '10.5px "Roboto Mono", monospace'; ctx.lineWidth = 1;
+  for (let k = 0; k <= 4; k++) {
+    const v = max * k / 4, y = Math.round(T + ph - v / max * ph) + .5;
+    ctx.strokeStyle = k ? 'rgba(255,255,255,.07)' : cv('--line2'); ctx.beginPath(); ctx.moveTo(L, y); ctx.lineTo(L + pw, y); ctx.stroke();
+    ctx.fillStyle = cv('--faint'); ctx.textAlign = 'right'; ctx.fillText(v.toFixed(max < 0.5 ? 2 : 1), L - 6, y + 3.5);
+  }
+  ctx.textAlign = 'left'; ctx.fillText('0', L, h - 5);
+  ctx.textAlign = 'right'; ctx.fillText(`epoch ${epoch}`, L + pw, h - 5);
+  ctx.textAlign = 'center'; if (epoch > 1) ctx.fillText(String(Math.round(epoch / 2)), L + pw / 2, h - 5);
   const line = (arr, color, width) => {
     if (arr.length < 2) return;
-    ctx.strokeStyle = color; ctx.lineWidth = width; ctx.beginPath();
-    arr.forEach((v, i) => { const x = i / (arr.length - 1) * w, y = h - 4 - (Math.min(isFinite(v) ? v : max, max) / max) * (h - 10); i ? ctx.lineTo(x, y) : ctx.moveTo(x, y); });
+    ctx.strokeStyle = color; ctx.lineWidth = width; ctx.lineJoin = 'round'; ctx.beginPath();
+    arr.forEach((v, i) => { const x = L + i / (arr.length - 1) * pw, y = T + ph - (Math.min(isFinite(v) ? v : max, max) / max) * ph; i ? ctx.lineTo(x, y) : ctx.moveTo(x, y); });
     ctx.stroke();
   };
-  line(hist.test, css.getPropertyValue('--faint').trim(), 1.5);
-  line(hist.train, css.getPropertyValue('--fg').trim(), 1.6);
+  line(hist.test, cv('--neg'), 1.6);
+  line(hist.train, cv('--fg'), 1.8);
+  const last = arr => arr.length ? arr[arr.length - 1] : NaN;
+  ctx.textAlign = 'right'; ctx.font = '11px "Roboto Mono", monospace';
+  if (isFinite(last(hist.train))) { ctx.fillStyle = cv('--fg'); ctx.fillText(`train ${last(hist.train).toFixed(3)}`, L + pw, T + 12); }
+  if (test.length && isFinite(last(hist.test))) { ctx.fillStyle = cv('--neg'); ctx.fillText(`test ${last(hist.test).toFixed(3)}`, L + pw, T + 26); }
 }
+function niceMax(v) { const p = 10 ** Math.floor(Math.log10(v)); for (const m of [1, 1.5, 2, 2.5, 3, 4, 5, 6, 8, 10]) if (v <= m * p) return m * p; return 10 * p; }
 
 /* ---------------- network diagram ---------------- */
 const netEl = $('net'), linksEl = $('links');
@@ -360,7 +374,7 @@ function render(full) {
   computeGrid();
   updateNetwork();
   drawOutput();
-  if (full || frameN % 2 === 0) drawLossChart();
+  drawLossChart();
   $('epoch').textContent = String(epoch).padStart(6, '0').replace(/\B(?=(\d{3})+(?!\d))/g, ',');
   const f = v => isFinite(v) ? v.toFixed(3) : '∞';
   $('trainloss').textContent = f(lastTrainLoss); $('testloss').textContent = test.length ? f(lastTestLoss) : '–';
@@ -372,7 +386,7 @@ function render(full) {
     $('trainacc').textContent = net.W.length ? net.W.reduce((s, L) => s + L.flat().filter(w => Math.abs(w) < 1e-3).length, 0) : '–';
     $('acclbl').textContent = 'Zero wts'; $('testacc').textContent = net.weightCount(); $('acclbl2').textContent = 'Params';
   }
-  $('lossname').textContent = S.problem === 'class' ? 'loss = log loss (NLL)' : 'loss = ½ squared error';
+  $('lossname').textContent = S.problem === 'class' ? 'log loss' : '½ squared error';
   $('sclo').textContent = S.problem === 'class' ? 'red' : '−1'; $('schi').textContent = S.problem === 'class' ? 'black' : '1';
   $('scmid').textContent = S.problem === 'class' ? 'P = 0.5' : '0';
   insight();
