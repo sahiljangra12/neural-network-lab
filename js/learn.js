@@ -32,7 +32,7 @@ function points(ctx, W, H, pts, R = 6, r = 3) {
   for (const p of pts) {
     const c = colormap(p.label);
     ctx.beginPath(); ctx.arc((p.x + R) / (2 * R) * W, (R - p.y) / (2 * R) * H, r, 0, 7);
-    ctx.fillStyle = `rgb(${c})`; ctx.fill(); ctx.strokeStyle = 'rgba(0,0,0,.8)'; ctx.lineWidth = 1; ctx.stroke();
+    ctx.fillStyle = `rgb(${c})`; ctx.fill(); ctx.strokeStyle = p.label > 0 ? 'rgba(220,220,220,.85)' : 'rgba(0,0,0,.85)'; ctx.lineWidth = 1; ctx.stroke();
   }
 }
 function pills(el, items, cur, onPick) {
@@ -178,7 +178,7 @@ const SURF = {
   banana: { n: 'Curved valley', f: (x, y) => 0.15 * (1 - x) ** 2 + 2 * (y - 0.35 * x * x) ** 2, start: [-2.5, -1] },
 };
 let surf = 'valley', gdOpt = 'sgd', gdRuns = [], gdImg = null, gdStart = SURF.valley.start.slice();
-const GDCOL = ['--neg', '--fg', '--warn', '--ok', '--mut'];
+const GDCOL = ['--neg', '--fg', '--mut', '--neg', '--fg'];
 pills($('gdsurf'), Object.entries(SURF).map(([k, v]) => [k, v.n]), surf, k => { surf = k; gdStart = SURF[k].start.slice(); gdRuns = []; gdImg = null; launchGD(); });
 pills($('gdopt'), [['sgd', 'Gradient descent'], ['momentum', 'Momentum'], ['adam', 'Adam']], gdOpt, k => { gdOpt = k; });
 const lrv = () => 10 ** +$('gdlr').value;
@@ -482,9 +482,9 @@ resetDepth(); resetOF(true); launchGD(); drawGloss(); drawQuiz(); drawAll(); onS
 let fr = 0;
 function loop() {
   fr++;
-  if (depthRun) { depthNets.forEach(n => trainEpoch(n, depthData, { lr: 0.1, optimizer: 'sgd' }, 10)); depthEp++; if (depthEp >= 500) { depthRun = false; $('depthgo').textContent = '▶ Train all three'; } drawDepth(); }
-  if (gdRuns.some(r => !r.done) && fr % 2 === 0) { stepGD(); drawGD(); }
-  if (ofRun) { ofStep(); drawOF(); }
+  if (depthRun && fr % 3 === 0) { depthNets.forEach(n => trainEpoch(n, depthData, { lr: 0.1, optimizer: 'sgd' }, 10)); depthEp++; if (depthEp >= 500) { depthRun = false; $('depthgo').textContent = '▶ Train all three'; } drawDepth(); }
+  if (gdRuns.some(r => !r.done) && fr % 5 === 0) { stepGD(); drawGD(); }
+  if (ofRun && fr % 2 === 0) { ofStep(); drawOF(); }
   requestAnimationFrame(loop);
 }
 requestAnimationFrame(loop);

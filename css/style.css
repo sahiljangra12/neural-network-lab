@@ -4,7 +4,7 @@
   --fg: #f2f2f2; --mut: #9b9b9b; --faint: #5e5e5e;
   --line: rgba(255, 255, 255, .12); --line2: rgba(255, 255, 255, .3);
   --acc: #ffffff; --acc2: #fc3d21; --acc-soft: rgba(255, 255, 255, .05);
-  --pos: #e9eef3; --neg: #fc3d21; --ok: #6fcf97; --warn: #f2b33d; --bad: #fc3d21;
+  --pos: #d4d4d4; --neg: #e0321f; --ok: #f2f2f2; --warn: #e0321f; --bad: #e0321f;
   --display: 'Barlow Condensed', 'Barlow', 'Helvetica Neue', Arial, sans-serif;
   --body: 'Barlow', 'Helvetica Neue', Arial, sans-serif;
   --mono: 'Roboto Mono', ui-monospace, monospace;
@@ -35,7 +35,7 @@ h1, h2, h3, h4 { font-family: var(--display); letter-spacing: .06em; line-height
 .nav nav a.on::after { content: ''; position: absolute; left: 12px; right: 12px; bottom: -15px; height: 2px; background: var(--fg); }
 .nav .sp { flex: 1; }
 .status { font-family: var(--mono); font-size: 11px; color: var(--mut); letter-spacing: .12em; display: flex; align-items: center; gap: 8px; }
-.status i { width: 6px; height: 6px; border-radius: 50%; background: var(--ok); }
+.status i { width: 6px; height: 6px; border-radius: 50%; background: var(--neg); }
 .iconbtn { white-space: nowrap; background: transparent; border: 1px solid var(--line2); color: var(--fg); min-width: 34px; height: 32px; cursor: pointer; display: grid; place-items: center; font-family: var(--mono); font-size: 11px; letter-spacing: .1em; padding: 0 9px; }
 .iconbtn:hover { background: var(--fg); color: #000; }
 
@@ -114,7 +114,7 @@ label.chk { display: flex; align-items: center; gap: 7px; font-size: 12px; color
 .net { position: relative; min-height: 420px; }
 .net svg.links { position: absolute; inset: 0; overflow: visible; }
 .net svg.links path { fill: none; cursor: pointer; }
-.net.training svg.links path { stroke-dasharray: 1 7; stroke-linecap: round; animation: flow .9s linear infinite; }
+.net.training svg.links path { stroke-dasharray: 1 7; stroke-linecap: round; animation: flow 2s linear infinite; }
 .net svg.links path:hover { stroke-opacity: 1 !important; }
 .node { position: absolute; width: 40px; height: 40px; border-radius: 50%; border: 1px solid var(--line2); background: var(--solid); cursor: pointer; transition: transform .15s; }
 .node canvas { width: 100%; height: 100%; display: block; border-radius: 50%; }
@@ -137,7 +137,7 @@ label.chk { display: flex; align-items: center; gap: 7px; font-size: 12px; color
 .outbox { position: relative; }
 #out { width: 100%; aspect-ratio: 1; display: block; border: 1px solid var(--line2); cursor: crosshair; }
 .axis { display: flex; justify-content: space-between; font-family: var(--mono); font-size: 10.5px; color: var(--faint); margin-top: 3px; }
-.scale { height: 4px; background: linear-gradient(90deg, var(--neg), #0b0b0b, var(--pos)); margin-top: 12px; }
+.scale { height: 6px; background: linear-gradient(90deg, rgb(170,36,26), rgb(58,58,58), #000); margin-top: 12px; border: 1px solid var(--line2); }
 .scalelbl { display: flex; justify-content: space-between; font-size: 10.5px; color: var(--faint); font-family: var(--mono); letter-spacing: .06em; }
 .stats { display: grid; grid-template-columns: 1fr 1fr; gap: 0; margin-top: 14px; border-top: 1px solid var(--line); border-left: 1px solid var(--line); }
 .stat { border-right: 1px solid var(--line); border-bottom: 1px solid var(--line); padding: 8px 12px; }

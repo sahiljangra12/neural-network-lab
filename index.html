@@ -37,6 +37,7 @@
     <button class="roundbtn" id="step" title="Train one epoch (S)" aria-label="Step"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M5 5v14l10-7zM17 5h2.5v14H17z"/></svg></button>
   </div>
   <div class="epoch">Epoch<b id="epoch">000,000</b></div>
+  <div class="ctl"><span>Speed</span><select id="speed"><option value="1">Very slow · 1 epoch/s</option><option value="3">Slow · 3/s</option><option value="10">Normal · 10/s</option><option value="25">Fast · 25/s</option><option value="60">Max · 60/s</option></select></div>
   <div class="ctl"><span>Learning rate</span><select id="lr"></select></div>
   <div class="ctl"><span>Activation</span><select id="act"></select></div>
   <div class="ctl"><span>Optimizer</span><select id="opt"><option value="sgd">SGD</option><option value="momentum">Momentum</option><option value="adam">Adam</option></select></div>
@@ -113,7 +114,7 @@
   <div>
     <div class="kicker">NEURAL NETWORK LAB — TRAINING CONSOLE</div>
     <h1>Train a neural network</h1>
-    <p>Choose the data, design the architecture, launch training. Each circle is a neuron showing what it has learned. Each line is a weight: white for positive, <span style="color:var(--neg)">red</span> for negative.</p>
+    <p>Choose the data, design the architecture, launch training. Each circle is a neuron showing what it has learned. On every map <span style="color:var(--neg)">red</span> is one class and black the other. Each line is a weight: grey for positive, <span style="color:var(--neg)">red</span> for negative.</p>
   </div>
   <div class="steps3">
     <a href="learn.html"><b>01 Academy</b>Neurons, loss, backprop</a>

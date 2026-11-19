@@ -12,7 +12,7 @@ let NODE = 40, VGAP = 54; const HEAD = 52;
 const DEFAULT = {
   problem: 'class', dataset: 'circle', regDataset: 'plane', lr: 0.03, act: 'tanh', opt: 'sgd',
   reg: 'none', regRate: 0, batch: 10, noise: 0, ratio: 50, layers: [4, 2], features: ['x1', 'x2'],
-  showTest: false, discretize: false, seed: 1,
+  showTest: false, discretize: false, seed: 1, speed: 10,
 };
 const clone = o => JSON.parse(JSON.stringify(o));
 
@@ -148,7 +148,7 @@ function drawOutput() {
       const c = colormap(S.problem === 'class' ? p.label : p.label);
       ctx.beginPath(); ctx.arc(P(p.x), Q(p.y), r, 0, 7);
       ctx.fillStyle = `rgb(${c[0]},${c[1]},${c[2]})`; ctx.fill();
-      ctx.lineWidth = (isTest ? 1.8 : 1) * dpr; ctx.strokeStyle = isTest ? '#8a96a3' : 'rgba(0,0,0,.8)'; ctx.stroke();
+      ctx.lineWidth = (isTest ? 1.8 : 1) * dpr; ctx.strokeStyle = isTest ? '#ffffff' : (p.label > 0 ? 'rgba(220,220,220,.85)' : 'rgba(0,0,0,.85)'); ctx.stroke();
     }
   };
   if (!hover) { drawPts(train, false); if (S.showTest) drawPts(test, true); }
@@ -287,7 +287,7 @@ netEl.addEventListener('mousemove', e => {
     if (l === 0) { const f = FEATURES[j]; showTip(e, `<b>${f.label}</b>: ${f.help}<br>${S.features.includes(f.id) ? 'On' : 'Off'}. Click to switch ${S.features.includes(f.id) ? 'off' : 'on'}.`); }
     else {
       const L = net.sizes.length - 1;
-      showTip(e, `<b>${l === L ? 'Output neuron' : `Layer ${l}, neuron ${j + 1}`}</b><br><span class="mono">bias b = ${net.b[l - 1][j].toFixed(3)}</span><br>${l === L ? (S.problem === 'class' ? 'σ(w·h + b) = P(white). This is logistic regression on the last layer.' : 'Linear output w·h + b') : `${ACTIVATIONS[S.act].name}(w·inputs + b)`}`);
+      showTip(e, `<b>${l === L ? 'Output neuron' : `Layer ${l}, neuron ${j + 1}`}</b><br><span class="mono">bias b = ${net.b[l - 1][j].toFixed(3)}</span><br>${l === L ? (S.problem === 'class' ? 'σ(w·h + b) = P(black). This is logistic regression on the last layer.' : 'Linear output w·h + b') : `${ACTIVATIONS[S.act].name}(w·inputs + b)`}`);
     }
   } else if (p) {
     hover = null;
@@ -320,7 +320,7 @@ out.addEventListener('mousemove', e => {
   const x = -6 + (e.clientX - r.left) / r.width * 12, y = 6 - (e.clientY - r.top) / r.height * 12;
   const p = net.forward(activeFeatures().map(f => f.f(x, y)));
   $('probe').innerHTML = S.problem === 'class'
-    ? `X₁ = ${x.toFixed(2)}, X₂ = ${y.toFixed(2)} → P(white) = <b>${p.toFixed(3)}</b>, predicts <b style="color:var(${p >= .5 ? '--pos' : '--neg'})">${p >= .5 ? 'white' : 'red'}</b>`
+    ? `X₁ = ${x.toFixed(2)}, X₂ = ${y.toFixed(2)} → P(black) = <b>${p.toFixed(3)}</b>, predicts <b style="color:var(${p >= .5 ? '--fg' : '--neg'})">${p >= .5 ? 'black' : 'red'}</b>`
     : `X₁ = ${x.toFixed(2)}, X₂ = ${y.toFixed(2)} → ŷ = <b>${p.toFixed(3)}</b>`;
 });
 
@@ -373,14 +373,22 @@ function render(full) {
     $('acclbl').textContent = 'Zero wts'; $('testacc').textContent = net.weightCount(); $('acclbl2').textContent = 'Params';
   }
   $('lossname').textContent = S.problem === 'class' ? 'loss = log loss (NLL)' : 'loss = ½ squared error';
-  $('sclo').textContent = S.problem === 'class' ? 'red' : '−1'; $('schi').textContent = S.problem === 'class' ? 'white' : '1';
+  $('sclo').textContent = S.problem === 'class' ? 'red' : '−1'; $('schi').textContent = S.problem === 'class' ? 'black' : '1';
   $('scmid').textContent = S.problem === 'class' ? 'P = 0.5' : '0';
   insight();
   frameN++;
 }
 
-function loop() {
-  if (playing) { trainEpoch(); render(); }
+let acc = 0, lastT = performance.now();
+function loop(now) {
+  const dt = Math.min(0.1, (now - lastT) / 1000); lastT = now;
+  let trained = false;
+  if (playing) {
+    acc += dt * S.speed;
+    let n = 0;
+    while (acc >= 1 && n < 4) { trainEpoch(); acc -= 1; n++; trained = true; }
+  }
+  if (trained) render();
   else if (hover !== lastHover) render(true);
   lastHover = hover;
   requestAnimationFrame(loop);
@@ -404,7 +412,7 @@ $('act').innerHTML = Object.entries(ACTIVATIONS).map(([k, a]) => `<option value=
 
 function syncControls() {
   $('lr').value = S.lr; $('regRate').value = S.regRate; $('act').value = S.act; $('opt').value = S.opt;
-  $('reg').value = S.reg; $('problem').value = S.problem;
+  $('reg').value = S.reg; $('problem').value = S.problem; $('speed').value = S.speed;
   $('ratio').value = S.ratio; $('ratiov').textContent = S.ratio + '%';
   $('noise').value = S.noise; $('noisev').textContent = S.noise;
   $('batch').value = S.batch; $('batchv').textContent = S.batch;
@@ -420,6 +428,7 @@ $('act').onchange = e => { S.act = e.target.value; structureChanged(); };
 $('problem').onchange = e => { S.problem = e.target.value; buildDatasetPicker(); dataChanged(); };
 $('ratio').oninput = e => { S.ratio = +e.target.value; $('ratiov').textContent = S.ratio + '%'; dataChanged(); };
 $('noise').oninput = e => { S.noise = +e.target.value; $('noisev').textContent = S.noise; dataChanged(); };
+$('speed').onchange = e => { S.speed = +e.target.value; acc = 0; writeHash(); };
 $('batch').oninput = e => { S.batch = +e.target.value; $('batchv').textContent = S.batch; writeHash(); };
 $('showTest').onchange = e => { S.showTest = e.target.checked; render(true); writeHash(); };
 $('discretize').onchange = e => { S.discretize = e.target.checked; render(true); writeHash(); };
@@ -485,4 +494,4 @@ syncControls();
 genData(); buildGrid(); newNet(); buildNetwork(); buildCards(); render(true); writeHash();
 const chParam = new URLSearchParams(location.search).get('challenge');
 if (chParam && CH[+chParam - 1]) loadChallenge(+chParam - 1);
-requestAnimationFrame(loop);
+requestAnimationFrame(t => { lastT = t; loop(t); });

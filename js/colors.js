@@ -1,11 +1,11 @@
 // Diverging colour scale: orange (−1) → neutral (0) → blue (+1).
-const NEG = [204, 54, 34], POS = [228, 232, 236];
+const NEG = [170, 36, 26], POS = [6, 6, 6];
 let MID = [232, 234, 235];
 let LUT = [];
 
 export function rebuildColormap() {
   const dark = document.documentElement.getAttribute('data-theme') === 'dark';
-  MID = [12, 12, 12];
+  MID = [58, 58, 58];
   LUT = [];
   for (let i = 0; i < 256; i++) {
     const t = i / 255 * 2 - 1, from = t < 0 ? NEG : POS, s = Math.abs(t);
