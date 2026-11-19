@@ -28,10 +28,12 @@ A mission-control-style training console for neural networks. Design a network, 
 8. **Glossary** (searchable) and a **16-question true/false quiz** with justifications.
 
 ## Technical report
-**[Read the technical report (PDF)](report/neural-network-lab-technical-report.pdf)**: 14 pages covering the engine's equations, the system design and a reproducible evaluation (gradient check, mission benchmarks, model capacity, overfitting with L2, learning-rate sweep). Every number, table and figure is generated from the site's own code:
+**[Read the technical report (PDF)](report/neural-network-lab-technical-report.pdf)**: 16 pages covering the engine's equations, the system design and a reproducible evaluation: an independent re-implementation in JAX/Optax that reproduces 18 complete training runs to machine precision, agreement with the closed-form logistic-regression MLE (scikit-learn) and least-squares solution, a gradient check, mission benchmarks, model capacity, overfitting with L2 and a learning-rate sweep. Every number, table and figure is generated from the site's own code:
 
 ```bash
 node tools/benchmark.mjs      # runs the experiments, writes paper/results.json, stats.tex and tables
+node tools/export_trace.mjs   # records complete training runs of the site's engine
+python3 tools/crosscheck.py   # replays them in JAX/Optax; checks MLE/OLS and the backprop lesson (pip install jax optax scikit-learn)
 python3 tools/figures.py      # draws the figures
 cd paper && latexmk -pdf neural_network_lab.tex
 ```

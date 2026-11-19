@@ -1,0 +1,18 @@
+tanh · SGD & 31 & 400 & $4.2\times 10^{-16}$ & $5.1\times 10^{-16}$ \\
+ReLU · SGD & 31 & 400 & $1.6\times 10^{-16}$ & $7.3\times 10^{-16}$ \\
+Leaky ReLU · SGD & 31 & 400 & $1.7\times 10^{-16}$ & $5.6\times 10^{-16}$ \\
+Sigmoid · SGD & 31 & 400 & $3.2\times 10^{-16}$ & $4.9\times 10^{-16}$ \\
+Linear · SGD & 31 & 400 & $3.7\times 10^{-16}$ & $6.5\times 10^{-16}$ \\
+No hidden layer (logistic regression) & 3 & 400 & $1.3\times 10^{-16}$ & $1.1\times 10^{-15}$ \\
+Momentum & 31 & 400 & $2.7\times 10^{-16}$ & $1.0\times 10^{-15}$ \\
+Adam & 31 & 400 & $4.2\times 10^{-16}$ & $6.8\times 10^{-16}$ \\
+L2 penalty · SGD & 31 & 400 & $3.0\times 10^{-16}$ & $6.2\times 10^{-16}$ \\
+L2 penalty · Adam & 31 & 400 & $1.8\times 10^{-16}$ & $8.4\times 10^{-16}$ \\
+L1 penalty · SGD & 51 & 400 & $4.5\times 10^{-16}$ & $1.6\times 10^{-15}$ \\
+L1 penalty · Momentum & 51 & 400 & $7.4\times 10^{-15}$ & $1.2\times 10^{-13}$ \\
+Batch size 1 & 31 & 1500 & $4.9\times 10^{-16}$ & $6.3\times 10^{-16}$ \\
+Batch size 7 (partial last batch) & 31 & 600 & $1.9\times 10^{-16}$ & $5.5\times 10^{-16}$ \\
+Deep network, all features, Adam & 269 & 300 & $2.4\times 10^{-15}$ & $1.1\times 10^{-15}$ \\
+Regression · tanh & 85 & 400 & $1.2\times 10^{-16}$ & $6.6\times 10^{-16}$ \\
+Regression · ReLU · Adam & 85 & 400 & $3.7\times 10^{-16}$ & $6.6\times 10^{-16}$ \\
+Regression · sigmoid hidden & 31 & 400 & $1.8\times 10^{-16}$ & $7.1\times 10^{-16}$ \\

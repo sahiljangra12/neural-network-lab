@@ -190,7 +190,7 @@ const T0 = Date.now();
 
 /* ---------- code metrics ---------- */
 {
-  const files = ['index.html', 'learn.html', 'css/style.css', 'js/nn.js', 'js/data.js', 'js/playground.js', 'js/learn.js', 'js/missions.js', 'js/colors.js', 'js/fx.js'];
+  const files = ['index.html', 'learn.html', 'css/style.css', 'js/nn.js', 'js/data.js', 'js/playground.js', 'js/learn.js', 'js/backprop.js', 'js/missions.js', 'js/colors.js', 'js/fx.js'];
   R.code = files.map(f => ({ f, lines: readFileSync(new URL('../' + f, import.meta.url), 'utf8').split('\n').length, kb: statSync(new URL('../' + f, import.meta.url)).size / 1024 }));
   R.code.total = R.code.reduce((s, c) => s + c.lines, 0);
 }

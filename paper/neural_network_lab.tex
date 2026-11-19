@@ -23,6 +23,7 @@
 \urlstyle{same}
 
 \input{stats.tex}
+\input{stats_crosscheck.tex}
 
 \makeatletter\newcommand{\inputtab}[1]{\@@input #1 }\makeatother
 \newcommand{\code}[1]{\texttt{\small #1}}
@@ -41,7 +42,7 @@
 
 \begin{abstract}
 \noindent
-Neural networks are usually taught through equations and static diagrams, which hide the part students find hardest: how a network's internal representation changes while it is trained. Neural Network Lab is an open, dependency-free website in which a learner builds a multilayer perceptron, trains it live in the browser with backpropagation, and watches what every neuron computes at every epoch. The site has two parts. The \emph{Console} is a single-screen training environment with eight synthetic datasets, seven input features, up to six hidden layers, five activation functions, three optimisers and L1/L2 regularisation, together with a rule-based diagnostics panel that explains failures such as divergence, overfitting, dead ReLUs and the collapse of all-linear networks, and \nMissions{} guided missions. The \emph{Academy} is a set of seven interactive lessons, from a single neuron to backpropagation computed number by number, with a glossary and a true/false quiz. The project grew out of \courseName{} at Johns Hopkins University, taught by \profName{}, and each lesson connects a neural-network idea to a statistical one: a sigmoid neuron is logistic regression, log loss is a negative log-likelihood, hidden layers are learned basis expansions, and weight decay is ridge regression. The learning engine is about \nnLines{} lines of JavaScript. Its analytic gradients agree with finite differences to a maximum relative error of $\gcMax$ over \gcParams{} parameters in \gcCases{} configurations. Every number in this report is produced by a script that runs the site's own engine with \nSeeds{} seeds, so the report and the website cannot disagree.
+Neural networks are usually taught through equations and static diagrams, which hide the part students find hardest: how a network's internal representation changes while it is trained. Neural Network Lab is an open, dependency-free website in which a learner builds a multilayer perceptron, trains it live in the browser with backpropagation, and watches what every neuron computes at every epoch. The site has two parts. The \emph{Console} is a single-screen training environment with eight synthetic datasets, seven input features, up to six hidden layers, five activation functions, three optimisers and L1/L2 regularisation, together with a rule-based diagnostics panel that explains failures such as divergence, overfitting, dead ReLUs and the collapse of all-linear networks, and \nMissions{} guided missions. The \emph{Academy} is a set of seven interactive lessons, from a single neuron to backpropagation computed number by number, with a glossary and a true/false quiz. The project grew out of \courseName{} at Johns Hopkins University, taught by \profName{}, and each lesson connects a neural-network idea to a statistical one: a sigmoid neuron is logistic regression, log loss is a negative log-likelihood, hidden layers are learned basis expansions, and weight decay is ridge regression. The learning engine is about \nnLines{} lines of JavaScript. Its analytic gradients agree with finite differences to a maximum relative error of $\gcMax$ over \gcParams{} parameters in \gcCases{} configurations. Replayed in an independent JAX/Optax implementation from identical starting points, \xcRuns{} complete training runs covering every activation, optimiser and penalty agree with the site to within $\xcParam$ in every parameter, at the limit of 64-bit arithmetic. A network with no hidden layer converges to the logistic-regression maximum-likelihood estimate and the least-squares solution computed by standard statistical software. Every number in this report is produced by a script that runs the site's own engine with \nSeeds{} seeds, so the report and the website cannot disagree.
 \end{abstract}
 
 \noindent\textbf{Keywords:} neural networks; backpropagation; interactive visualisation; statistics education; logistic regression; regularisation; bias--variance trade-off; open educational software
@@ -58,7 +59,8 @@ A multilayer perceptron is a short formula, yet what it \emph{does} during train
   \item A self-contained learning engine (\cref{sec:engine}): a multilayer perceptron with backpropagation, mini-batch training, SGD, momentum and Adam, and L1/L2 penalties, written in plain JavaScript with no libraries and verified against numerical gradients (\cref{sec:gradcheck}).
   \item A single-screen training console (\cref{sec:console}) that shows every neuron's output over the input plane, lets the learner edit any weight, encodes the full configuration in a shareable link, and explains what it sees through a rule-based diagnostics panel.
   \item A curriculum (\cref{sec:academy}) of \nMissions{} guided missions and seven interactive lessons that link neural-network behaviour to statistical concepts, with a glossary and a quiz written in the style of true/false examination questions with justification.
-  \item A reproducible evaluation (\cref{sec:validation}): every number, table and figure in this report is regenerated by \code{tools/benchmark.mjs} and \code{tools/figures.py}, which run the website's own engine.
+  \item An independent verification (\cref{sec:xcheck}): full training runs are replayed in JAX and Optax and match the site to machine precision, and the no-hidden-layer model reproduces closed-form statistical estimates.
+  \item A reproducible evaluation (\cref{sec:validation}): every number, table and figure in this report is regenerated by scripts that run the website's own engine.
 \end{enumerate}
 
 % =====================================================================
@@ -216,6 +218,25 @@ Lesson & Interactive widget & Connection to the course \\
 
 All experiments below run the website's own modules (\code{js/nn.js}, \code{js/data.js}, \code{js/missions.js}) under Node.js with the same training procedure as the Console and seeded random numbers. Each experiment is repeated with \nSeeds{} seeds for the network's initial weights and the shuffling order; results are reported as mean $\pm$ standard deviation. The complete benchmark took \runtime{} seconds.
 
+\subsection{Independent re-implementation}\label{sec:xcheck}
+A gradient check tests one step. To test the whole training procedure---forward pass, backpropagation, mini-batching, the three optimisers and both penalties---every update was reproduced by a second, independent implementation. \code{tools/export\_trace.mjs} runs the site's engine and records the initial parameters, the training data, the shuffle order of every epoch, the loss after every epoch and the final parameters. \code{tools/crosscheck.py} then replays each run in JAX \xcJax{} \citep{jax2018github} with gradients obtained by automatic differentiation and updates performed by the reference optimisers of Optax \xcOptax{} \citep{deepmind2020jax} (\code{sgd}, \code{sgd} with momentum 0.9, \code{adam}), in 64-bit arithmetic. The L2 penalty is expressed as $\tfrac{\lambda}{2}\lVert\mathbf{w}\rVert^2$ in the objective, and the L1 subgradient and its sign-crossing rule (\cref{sec:engine}) are applied as documented.
+
+\Cref{tab:xcheck} lists the \xcRuns{} runs, covering every activation, both tasks, all three optimisers, both penalties, batch sizes of 1, 7 (leaving a partial final batch) and 10, and a four-layer network with all seven features. Across \xcUpdates{} parameter updates the largest difference in any parameter after training was $\xcParam$, relative to the largest parameter, and the largest relative difference in the loss after any epoch was $\xcLoss$. Differences of this size come from the order of floating-point additions; any error in a derivative, an optimiser or a penalty would produce differences many orders of magnitude larger.
+
+Two further checks tie the engine to closed-form statistics. With no hidden layer, a sigmoid output and full-batch gradient descent for 20{,}000 epochs on 300 overlapping Gaussian points, the network's weights match the logistic-regression maximum-likelihood estimate computed by scikit-learn to a relative difference of $\xcLogit$. With a linear output on the noisy plane data they match the ordinary least-squares solution computed by NumPy to $\xcOls$. Finally, the Academy's backpropagation lesson, which computes its numbers separately from the engine, was compared with JAX's automatic derivatives for \xcBpCases{} inputs, targets and learning rates; every gradient, loss and updated loss agreed to $\xcBp$.
+
+\begin{table}[!htbp]
+\centering\small
+\caption{Independent replay of training runs in JAX and Optax. ``Parameter'' is the largest difference in any final weight or bias, relative to the largest parameter; ``Loss'' is the largest relative difference in the training loss after any epoch.}\label{tab:xcheck}
+\begin{tabular}{l r r c c}
+\toprule
+Run & Parameters & Updates & Parameter & Loss \\
+\midrule
+\inputtab{tab_crosscheck.tex}
+\bottomrule
+\end{tabular}
+\end{table}
+
 \subsection{Gradient check}\label{sec:gradcheck}
 For every activation and both tasks, a 3--5--4--1 network with random weights was given one random example, and each analytic gradient was compared with a central finite difference ($h = 10^{-6}$) of the loss. \Cref{tab:grad} reports the largest relative error $|g_a - g_n| / (|g_a| + |g_n|)$. Across \gcParams{} parameters the maximum was $\gcMax$, consistent with finite-difference rounding error and confirming that the backpropagation equations are implemented correctly.
 
@@ -309,9 +330,11 @@ The networks are small and the data are two-dimensional, which is what makes eve
 % =====================================================================
 \section{Conclusion}
 
-Neural Network Lab lets a learner train a neural network in the browser, see what every neuron computes at every step, and read why the network succeeds or fails. By tying each behaviour to a statistical idea---logistic regression, likelihood, basis expansion, the bias--variance trade-off and ridge and lasso penalties---it is meant to help students who learn neural networks after a statistics course see the neural network as an extension of models they already understand. The engine's gradients are verified numerically, and every result in this report is regenerated from the site's own code.
+Neural Network Lab lets a learner train a neural network in the browser, see what every neuron computes at every step, and read why the network succeeds or fails. By tying each behaviour to a statistical idea---logistic regression, likelihood, basis expansion, the bias--variance trade-off and ridge and lasso penalties---it is meant to help students who learn neural networks after a statistics course see the neural network as an extension of models they already understand. The engine's gradients are verified numerically, its complete training runs are reproduced to machine precision by an independent JAX implementation, and every result in this report is regenerated from the site's own code.
 
-\paragraph{Availability.} The website is at \siteurl{} and the source code, benchmark scripts and this report's \LaTeX{} source are at \url{https://github.com/sahiljangra12/neural-network-lab}. To reproduce the results: \code{node tools/benchmark.mjs}, then \code{python3 tools/figures.py}, then compile \code{paper/neural\_network\_lab.tex}.
+\paragraph{Availability.} The website is at \siteurl{} and the source code, benchmark scripts and this report's \LaTeX{} source are at \url{https://github.com/sahiljangra12/neural-network-lab}. To reproduce the results, run
+\begin{center}\small\code{node tools/benchmark.mjs; node tools/export\_trace.mjs}\\\code{python3 tools/crosscheck.py; python3 tools/figures.py}\end{center}
+and compile \code{paper/neural\_network\_lab.tex}.
 
 \paragraph{Acknowledgements.} This project was inspired by \courseName{} at Johns Hopkins University, taught by \profName{} \citep{asda2026}. Its treatment of likelihood, logistic regression, regularisation and model selection shaped the Academy's lessons and missions. The interface was also inspired by TensorFlow Playground \citep{smilkov2017playground}. Any errors are the author's own.
 

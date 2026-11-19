@@ -1,6 +1,7 @@
-import { Network, ACTIVATIONS } from './nn.js?v=202611182231';
-import { makeData, normalFrom, rng } from './data.js?v=202611182231';
-import { colormap, rebuildColormap } from './colors.js?v=202611182231';
+import { Network, ACTIVATIONS } from './nn.js?v=202611190245';
+import { makeData, normalFrom, rng } from './data.js?v=202611190245';
+import { BP, bpStep } from './backprop.js?v=202611190245';
+import { colormap, rebuildColormap } from './colors.js?v=202611190245';
 
 const $ = id => document.getElementById(id);
 const cssv = n => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
@@ -278,27 +279,14 @@ $('gdgo').onclick = launchGD;
 $('gdclear').onclick = () => { gdRuns = []; drawGD(); $('gdstat').textContent = 'Click the map or press Run.'; $('gdnote').textContent = ''; };
 
 /* =============== 6. BACKPROP =============== */
-const BP = { W1: [[0.4, -0.6], [0.7, 0.2]], b1: [0.1, -0.1], W2: [0.8, -0.5], b2: 0.05 };
-let bpStep = 0;
+let bpStepN = 0;
 const STEPS = ['Setup', 'Hidden sums', 'Hidden activations', 'Output & loss', 'Output error', 'Output gradients', 'Error flows back', 'Hidden gradients', 'Update'];
 function bpCompute() {
-  const x = [+$('bx1').value || 0, +$('bx2').value || 0], y = +$('by').value, lr = +$('blr').value || 0;
-  const { W1, b1, W2, b2 } = BP;
-  const z = W1.map((w, j) => w[0] * x[0] + w[1] * x[1] + b1[j]), h = z.map(Math.tanh);
-  const zo = W2[0] * h[0] + W2[1] * h[1] + b2, p = sig(zo);
-  const L = -(y * Math.log(p) + (1 - y) * Math.log(1 - p));
-  const dO = p - y, gW2 = h.map(v => dO * v), gb2 = dO;
-  const dH = h.map((v, j) => dO * W2[j] * (1 - v * v));
-  const gW1 = W1.map((w, j) => w.map((_, i) => dH[j] * x[i])), gb1 = dH.slice();
-  const nW1 = W1.map((w, j) => w.map((v, i) => v - lr * gW1[j][i])), nb1 = b1.map((v, j) => v - lr * gb1[j]);
-  const nW2 = W2.map((v, j) => v - lr * gW2[j]), nb2 = b2 - lr * gb2;
-  const nz = nW1.map((w, j) => w[0] * x[0] + w[1] * x[1] + nb1[j]), nh = nz.map(Math.tanh), np = sig(nW2[0] * nh[0] + nW2[1] * nh[1] + nb2);
-  const nL = -(y * Math.log(np) + (1 - y) * Math.log(1 - np));
-  return { x, y, lr, z, h, zo, p, L, dO, gW2, gb2, dH, gW1, gb1, nW1, nb1, nW2, nb2, np, nL };
+  return bpStep([+$('bx1').value || 0, +$('bx2').value || 0], +$('by').value, +$('blr').value || 0);
 }
 const f3 = v => (v >= 0 ? ' ' : '') + v.toFixed(3);
 function bpRender() {
-  const c = bpCompute(), s = bpStep;
+  const c = bpCompute(), s = bpStepN;
   const P = { x: [[80, 85], [80, 215]], h: [[330, 85], [330, 215]], o: [[560, 150]] };
   const acc = cssv('--acc'), mut = cssv('--line2'), neg = cssv('--neg');
   const active = {
@@ -343,11 +331,11 @@ function bpRender() {
   };
   $('bpexp').innerHTML = E[s];
   $('bpsteps').innerHTML = STEPS.map((t, i) => `<button class="pill${i === s ? ' on' : ''}" data-s="${i}">${i}. ${t}</button>`).join('');
-  $('bpsteps').querySelectorAll('.pill').forEach(b => b.onclick = () => { bpStep = +b.dataset.s; bpRender(); });
+  $('bpsteps').querySelectorAll('.pill').forEach(b => b.onclick = () => { bpStepN = +b.dataset.s; bpRender(); });
   $('bpprev').disabled = s === 0; $('bpnext').textContent = s === 8 ? 'Start over ↺' : 'Next step →';
 }
-$('bpnext').onclick = () => { bpStep = bpStep === 8 ? 0 : bpStep + 1; bpRender(); };
-$('bpprev').onclick = () => { bpStep = Math.max(0, bpStep - 1); bpRender(); };
+$('bpnext').onclick = () => { bpStepN = bpStepN === 8 ? 0 : bpStepN + 1; bpRender(); };
+$('bpprev').onclick = () => { bpStepN = Math.max(0, bpStepN - 1); bpRender(); };
 ['bx1', 'bx2', 'by', 'blr'].forEach(id => $(id).addEventListener('input', bpRender));
 
 /* =============== 7. OVERFITTING =============== */
@@ -417,7 +405,7 @@ const GLOSS = [
   ['Adam', 'An optimizer that combines momentum with a per-parameter step size scaled by recent gradient magnitudes.'],
   ['Overfitting', 'Fitting noise in the training data: low training loss, higher test loss. A high-variance model.'],
   ['Regularization', 'Anything that limits model complexity to reduce variance: L2, L1, dropout, early stopping, smaller networks.'],
-  ['L2 / weight decay', 'Adding λ‖w‖² to the loss, the same penalty as ridge regression. It shrinks all weights smoothly toward zero.'],
+  ['L2 / weight decay', 'Adding ½λ‖w‖² to the loss (gradient λw), the same kind of penalty as ridge regression. It shrinks all weights smoothly toward zero.'],
   ['L1', 'Adding λ‖w‖₁ (lasso). It pushes weak weights to exactly zero, giving sparse connections.'],
   ['Early stopping', 'Stopping training when validation loss stops improving; it acts as regularization.'],
   ['Vanishing gradient', 'Gradients shrink as they are multiplied by small activation slopes through many layers, so early layers barely learn.'],
@@ -443,7 +431,7 @@ const QUIZ = [
   [false, 'A larger learning rate always makes training converge faster.', 'Past a threshold each step overshoots the minimum; the loss oscillates or diverges.'],
   [true, 'Backpropagation needs the values computed during the forward pass.', 'Each local derivative (e.g. tanh′ = 1 − h², ∂z/∂w = input) uses the stored activations.'],
   [false, 'Backpropagation is an optimization algorithm that replaces gradient descent.', 'Backprop only computes the gradients. Gradient descent (or Adam, etc.) uses them to update the weights.'],
-  [true, 'L2 regularization on a neural network\'s weights is the same penalty as ridge regression.', 'Adding λ‖w‖² gives the gradient an extra 2λw term (weight decay), shrinking weights toward 0 and reducing variance.'],
+  [true, 'L2 regularization on a neural network\'s weights is the same penalty as ridge regression.', 'A penalty ½λ‖w‖² adds λw to every weight\'s gradient (weight decay), shrinking weights toward 0 and reducing variance.'],
   [false, 'If training loss keeps decreasing, the model is getting better on new data.', 'Training loss always falls with more capacity or more epochs. Test or validation loss can rise at the same time: overfitting.'],
   [true, 'Deep networks with sigmoid hidden activations can suffer vanishing gradients.', 'Backprop multiplies one σ′ ≤ 0.25 per layer, so the signal shrinks geometrically toward the input layers.'],
   [false, 'The perceptron\'s step activation can be trained by gradient descent.', 'Its derivative is 0 almost everywhere, so there is no gradient signal. Smooth activations made backprop possible.'],

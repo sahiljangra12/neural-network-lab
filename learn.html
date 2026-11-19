@@ -9,8 +9,8 @@
 <link rel="icon" href="img/logo.svg" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600&family=Barlow+Condensed:wght@500;600;700&family=Roboto+Mono:wght@400;500&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="css/style.css?v=202611182231">
-<script src="js/fx.js?v=202611182231"></script>
+<link rel="stylesheet" href="css/style.css?v=202611190245">
+<script src="js/fx.js?v=202611190245"></script>
 </head>
 <body>
 <header class="nav"><div class="in">
@@ -178,7 +178,7 @@
   <div class="num">Module 07</div>
   <h2>Overfitting and regularization</h2>
   <p class="lead">A big enough network can memorise its training data, noise included. The test set catches it.</p>
-  <p>Two identical networks (2 hidden layers of 8 neurons) train on the <b>same 50 noisy points</b>. The right-hand one has an <b>L2 penalty</b> λ‖w‖² added to its loss. That is ridge regression's penalty, called <b>weight decay</b> in deep learning. Watch the test loss.</p>
+  <p>Two identical networks (2 hidden layers of 8 neurons) train on the <b>same 50 noisy points</b>. The right-hand one has an <b>L2 penalty</b> ½λ‖w‖² added to its loss (its gradient is λw). That is ridge regression's penalty, called <b>weight decay</b> in deep learning. Watch the test loss.</p>
   <div class="widget">
     <div class="sl" style="grid-template-columns:120px 1fr 60px;max-width:520px"><span>L2 strength λ</span><input type="range" id="ofl" min="0" max="8" step="1" value="4"><span class="val" id="oflv"></span></div>
     <div class="wgrid" style="margin-top:10px">
@@ -224,6 +224,6 @@
   <span><a href="report/neural-network-lab-technical-report.pdf">Technical report (PDF)</a> · <a href="index.html">Back to the console</a></span>
 </div></footer>
 
-<script type="module" src="js/learn.js?v=202611182231"></script>
+<script type="module" src="js/learn.js?v=202611190245"></script>
 </body>
 </html>

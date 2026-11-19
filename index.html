@@ -9,8 +9,8 @@
 <link rel="icon" href="img/logo.svg" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600&family=Barlow+Condensed:wght@500;600;700&family=Roboto+Mono:wght@400;500&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="css/style.css?v=202611182231">
-<script src="js/fx.js?v=202611182231"></script>
+<link rel="stylesheet" href="css/style.css?v=202611190245">
+<script src="js/fx.js?v=202611190245"></script>
 </head>
 <body>
 <header class="nav"><div class="in">
@@ -125,12 +125,12 @@
 
 <section class="section" id="report">
   <h2>Technical report</h2>
-  <p class="lead">A 14-page technical report covering the learning engine's equations, how the site is built, and a reproducible evaluation: a gradient check, benchmarks of every mission, model-capacity, overfitting and learning-rate experiments. Every number in it is produced by a script that runs this site's own code.</p>
+  <p class="lead">A 16-page technical report covering the learning engine's equations, how the site is built, and a reproducible evaluation: a gradient check, benchmarks of every mission, model-capacity, overfitting and learning-rate experiments. Every number in it is produced by a script that runs this site's own code, and complete training runs are independently reproduced in JAX/Optax to machine precision (largest difference 7×10⁻¹⁵); with no hidden layer the network converges to the exact logistic-regression MLE and least-squares solution.</p>
   <div class="reportbox">
     <div class="rmeta">
       <div class="rtitle">Neural Network Lab: an open, browser-based training console and interactive curriculum for seeing how neural networks learn</div>
       <div class="rauth">Sahil · Whiting School of Engineering, Johns Hopkins University · November 2026</div>
-      <div class="rfacts"><span>14 pages</span><span>8 tables</span><span>5 figures</span><span>22 references</span></div>
+      <div class="rfacts"><span>16 pages</span><span>9 tables</span><span>5 figures</span><span>24 references</span></div>
     </div>
     <div class="ractions">
       <a class="btn pri" href="report/neural-network-lab-technical-report.pdf" target="_blank" rel="noopener">Read the report (PDF)</a>
@@ -179,6 +179,6 @@
 <div class="tooltip" id="tip"></div>
 <div class="wedit" id="wedit"><div style="margin-bottom:6px;color:var(--mut)" id="weditlbl">Weight</div><input id="weditin" type="number" step="0.1"> <button class="btn sm" id="weditok">Set</button></div>
 
-<script type="module" src="js/playground.js?v=202611182231"></script>
+<script type="module" src="js/playground.js?v=202611190245"></script>
 </body>
 </html>
