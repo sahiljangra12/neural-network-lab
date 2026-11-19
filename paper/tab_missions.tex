@@ -1,0 +1,11 @@
+1 & Hello, neuron & gauss & none & tanh & sgd, 0.03 & 3 & 100.0 $\pm$ 0.0 & 5/5 \\
+2 & Why a straight line fails & circle & none & tanh & sgd, 0.03 & 3 & 58.8 $\pm$ 1.2 & 0/5 \\
+3 & Fix it with features & circle & none & tanh & sgd, 0.03 & 3 & 100.0 $\pm$ 0.0 & 5/5 \\
+4 & Fix it with a hidden layer & circle & 4 & tanh & sgd, 0.03 & 17 & 98.7 $\pm$ 0.8 & 5/5 \\
+5 & The XOR problem & xor & 4 & tanh & sgd, 0.03 & 17 & 94.8 $\pm$ 5.2 & 3/5 \\
+6 & Linear activation trap & circle & 8--8--8 & linear & sgd, 0.01 & 177 & 59.3 $\pm$ 0.3 & 0/5 \\
+7 & Learning rate too high & circle & 4--2 & tanh & sgd, 3 & 25 & 72.0 $\pm$ 10.5 & 1/5 \\
+8 & Overfitting on purpose & xor & 8--8--8--8 & tanh & sgd, 0.03 & 289 & 73.6 $\pm$ 2.1 & 0/5 \\
+9 & L1 makes weights vanish & circle & 4 & tanh & sgd, 0.03, L1 0.003 & 37 & 100.0 $\pm$ 0.0 & 5/5 \\
+10 & Beat the spiral & spiral & 8--8--8--6 & tanh & adam, 0.01 & 229 & 94.9 $\pm$ 3.2 & 5/5 \\
+11 & Regression: fit a surface & multigauss & 8--6 & tanh & sgd, 0.03 & 85 & MSE 0.0433 & -- \\

@@ -27,6 +27,18 @@ A mission-control-style training console for neural networks. Design a network, 
 7. **Overfitting and regularization:** live train/test loss with and without L2 weight decay.
 8. **Glossary** (searchable) and a **16-question true/false quiz** with justifications.
 
+## Technical report
+**[Read the technical report (PDF)](report/neural-network-lab-technical-report.pdf)**: 13 pages covering the engine's equations, the system design and a reproducible evaluation (gradient check, mission benchmarks, model capacity, overfitting with L2, learning-rate sweep). Every number, table and figure is generated from the site's own code:
+
+```bash
+node tools/benchmark.mjs      # runs the experiments, writes paper/results.json, stats.tex and tables
+python3 tools/figures.py      # draws the figures
+cd paper && latexmk -pdf neural_network_lab.tex
+```
+
+## Inspiration
+This project was inspired by **EN.553.413/613 Applied Statistics and Data Analysis (ASDA)**, taught by **Prof. Suryanarayana Maddu**, Department of Applied Mathematics and Statistics, Johns Hopkins University (Fall 2026). The course's treatment of likelihood, logistic regression, ridge and lasso regularisation, the bias–variance trade-off and model selection shaped the Academy's lessons and the missions.
+
 ## Tech
 Plain HTML, CSS and ES modules with no build step and no dependencies. The network (`js/nn.js`) is a small, hand-written MLP with backpropagation, momentum, Adam and L1/L2. It is hosted on GitHub Pages.
 
