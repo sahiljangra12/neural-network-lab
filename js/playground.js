@@ -1,7 +1,7 @@
-import { CLASS_DATASETS, REG_DATASETS, FEATURES, makeData } from './data.js';
-import { Network, ACTIVATIONS } from './nn.js';
-import { colormap, rebuildColormap } from './colors.js';
-import { CH } from './missions.js';
+import { CLASS_DATASETS, REG_DATASETS, FEATURES, makeData } from './data.js?v=202611182013';
+import { Network, ACTIVATIONS } from './nn.js?v=202611182013';
+import { colormap, rebuildColormap } from './colors.js?v=202611182013';
+import { CH } from './missions.js?v=202611182013';
 
 const $ = id => document.getElementById(id);
 const LRS = [0.00001, 0.0001, 0.001, 0.003, 0.01, 0.03, 0.1, 0.3, 1, 3, 10];
@@ -207,8 +207,8 @@ function buildNetwork() {
   const counts = [FEATURES.length, ...S.layers, 1];
   const maxN = Math.max(...counts);
   const availH = netEl.parentElement.clientHeight;
-  VGAP = availH > 200 ? Math.max(30, Math.min(60, Math.floor((availH - HEAD - 6) / maxN))) : 54;
-  NODE = VGAP < 38 ? 26 : VGAP < 46 ? 32 : VGAP < 52 ? 36 : 40;
+  VGAP = availH > 150 ? Math.max(26, Math.min(60, Math.floor((availH - HEAD - 6) / maxN))) : 54;
+  NODE = VGAP < 32 ? 22 : VGAP < 38 ? 26 : VGAP < 46 ? 32 : VGAP < 52 ? 36 : 40;
   const height = HEAD + maxN * VGAP;
   netEl.style.height = height + 'px'; netEl.style.width = width + 'px';
   linksEl.setAttribute('width', width); linksEl.setAttribute('height', height);

@@ -1,6 +1,6 @@
-import { Network, ACTIVATIONS } from './nn.js';
-import { makeData, normalFrom, rng } from './data.js';
-import { colormap, rebuildColormap } from './colors.js';
+import { Network, ACTIVATIONS } from './nn.js?v=202611182013';
+import { makeData, normalFrom, rng } from './data.js?v=202611182013';
+import { colormap, rebuildColormap } from './colors.js?v=202611182013';
 
 const $ = id => document.getElementById(id);
 const cssv = n => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
