@@ -465,3 +465,36 @@ input[type=range]::-webkit-slider-runnable-track { height: 2px; background: rgba
 input[type=range]::-moz-range-track { height: 2px; background: rgba(0,0,0,.7); }
 .bp-svg text { font-weight: 500; font-size: 13px; }
 .bp-svg .lab { font-weight: 600; }
+
+/* ---------- Tinted page background so white panels stand out ---------- */
+:root { --bg: #e4e7eb; --card: #ffffff; --card2: #eef0f3; --solid: #ffffff; }
+body { background-color: #e4e7eb; background-image: linear-gradient(rgba(0,0,0,.045) 1px, transparent 1px), linear-gradient(90deg, rgba(0,0,0,.045) 1px, transparent 1px); background-size: 28px 28px; background-attachment: fixed; }
+.nav { background: rgba(255,255,255,.96); border-bottom: 2px solid #000; }
+.panel, .controls, .widget, .mission .bar, .reportbox, .quiz .q, .guide .card { background: #fff; border: 1.5px solid #000; box-shadow: 4px 4px 0 rgba(0,0,0,.14); }
+.cards { background: #fff; border: 1.5px solid #000; box-shadow: 4px 4px 0 rgba(0,0,0,.14); }
+.cards .card { background: #fff; }
+.cards .card:hover { background: #f3f4f6; }
+select, input[type=number], .gsearch, .wedit, #boot { background: #fff; }
+.btn { background: #fff; } .btn.pri { background: #000; color: #fff; } .btn:hover { background: #000; color: #fff; } .btn.pri:hover { background: #fff; color: #000; }
+.iconbtn, .roundbtn, .colhead .pm button, .steps3 a, .pills { background: #fff; }
+.iconbtn:hover, .colhead .pm button:hover, .pill.on, .steps3 a:hover { background: #000; color: #fff; }
+.steps3 a:hover b { color: #fff; }
+.play, #fab button { color: #fff; background: #000; }
+.tooltip { background: #000; color: #fff; } .tooltip .mono { color: #fff; }
+.net { background-image: radial-gradient(rgba(0,0,0,.16) 1px, transparent 1px); background-size: 20px 20px; }
+#out, canvas.plot { border: 1.5px solid #000; }
+.stat { background: #fff; }
+.insight, .callout, .formula, .bpexp .eq { background: #eef0f3; }
+.inspo, .academyintro p, .cite { background: #fff; padding: 12px 18px; border: 1.5px solid #000; border-left-width: 4px; }
+.lesson > p, .lesson li, .lesson .lead, .section > p.lead, .hero p { text-shadow: 0 0 0 transparent; }
+footer.site { background: #fff; border-top: 2px solid #000; }
+.toc { background: transparent; }
+@media print { body { background: #fff; } }
+/* Academy: reading column on a white sheet; widgets inside go flat */
+.learn > main { background: #fff; border: 1.5px solid #000; box-shadow: 4px 4px 0 rgba(0,0,0,.14); padding: 0 34px 40px; margin: 26px 0 0; }
+.learn > main .widget, .learn > main .quiz .q { box-shadow: none; }
+.learn > main .academyintro p { border: 0; border-left: 4px solid #000; }
+.toc { padding-top: 40px; }
+.toc a { background: #fff; }
+.section > p.lead, .hero p { color: #000; }
+@media (max-width: 860px) { .learn > main { padding: 0 14px 28px; margin-top: 14px; } .learn { padding-left: 10px; padding-right: 10px; } }

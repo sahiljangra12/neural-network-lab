@@ -1,7 +1,7 @@
-import { Network, ACTIVATIONS } from './nn.js?v=202611202351';
-import { makeData, normalFrom, rng } from './data.js?v=202611202351';
-import { BP, bpStep } from './backprop.js?v=202611202351';
-import { colormap, rebuildColormap } from './colors.js?v=202611202351';
+import { Network, ACTIVATIONS } from './nn.js?v=202611210024';
+import { makeData, normalFrom, rng } from './data.js?v=202611210024';
+import { BP, bpStep } from './backprop.js?v=202611210024';
+import { colormap, rebuildColormap } from './colors.js?v=202611210024';
 
 const $ = id => document.getElementById(id);
 const cssv = n => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
