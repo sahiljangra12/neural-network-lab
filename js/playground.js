@@ -1,7 +1,7 @@
-import { CLASS_DATASETS, REG_DATASETS, FEATURES, makeData } from './data.js?v=202611202325';
-import { Network, ACTIVATIONS } from './nn.js?v=202611202325';
-import { colormap, rebuildColormap } from './colors.js?v=202611202325';
-import { CH } from './missions.js?v=202611202325';
+import { CLASS_DATASETS, REG_DATASETS, FEATURES, makeData } from './data.js?v=202611202351';
+import { Network, ACTIVATIONS } from './nn.js?v=202611202351';
+import { colormap, rebuildColormap } from './colors.js?v=202611202351';
+import { CH } from './missions.js?v=202611202351';
 
 const $ = id => document.getElementById(id);
 const LRS = [0.00001, 0.0001, 0.001, 0.003, 0.01, 0.03, 0.1, 0.3, 1, 3, 10];
@@ -169,10 +169,10 @@ function drawLossChart() {
   const L = 44, B = 20, T = 6, Rm = 8, pw = w - L - Rm, ph = h - T - B;
   const all = hist.train.concat(hist.test).filter(isFinite);
   const max = niceMax(Math.max(0.05, ...all));
-  ctx.font = '10.5px "Roboto Mono", monospace'; ctx.lineWidth = 1;
+  ctx.font = '500 11.5px "Roboto Mono", monospace'; ctx.lineWidth = 1;
   for (let k = 0; k <= 4; k++) {
     const v = max * k / 4, y = Math.round(T + ph - v / max * ph) + .5;
-    ctx.strokeStyle = k ? 'rgba(0,0,0,.08)' : cv('--line2'); ctx.beginPath(); ctx.moveTo(L, y); ctx.lineTo(L + pw, y); ctx.stroke();
+    ctx.strokeStyle = k ? 'rgba(0,0,0,.16)' : cv('--line2'); ctx.beginPath(); ctx.moveTo(L, y); ctx.lineTo(L + pw, y); ctx.stroke();
     ctx.fillStyle = cv('--faint'); ctx.textAlign = 'right'; ctx.fillText(v.toFixed(max < 0.5 ? 2 : 1), L - 6, y + 3.5);
   }
   ctx.textAlign = 'left'; ctx.fillText('0', L, h - 5);
@@ -184,10 +184,10 @@ function drawLossChart() {
     arr.forEach((v, i) => { const x = L + i / (arr.length - 1) * pw, y = T + ph - (Math.min(isFinite(v) ? v : max, max) / max) * ph; i ? ctx.lineTo(x, y) : ctx.moveTo(x, y); });
     ctx.stroke();
   };
-  line(hist.test, cv('--neg'), 1.6);
-  line(hist.train, cv('--fg'), 1.8);
+  line(hist.test, cv('--neg'), 2.4);
+  line(hist.train, cv('--fg'), 2.6);
   const last = arr => arr.length ? arr[arr.length - 1] : NaN;
-  ctx.textAlign = 'right'; ctx.font = '11px "Roboto Mono", monospace';
+  ctx.textAlign = 'right'; ctx.font = '600 12.5px "Roboto Mono", monospace';
   if (isFinite(last(hist.train))) { ctx.fillStyle = cv('--fg'); ctx.fillText(`train ${last(hist.train).toFixed(3)}`, L + pw, T + 12); }
   if (test.length && isFinite(last(hist.test))) { ctx.fillStyle = cv('--neg'); ctx.fillText(`test ${last(hist.test).toFixed(3)}`, L + pw, T + 26); }
 }
@@ -283,8 +283,8 @@ function updateNetwork() {
   for (const k of linkEls) {
     const w = net.W[k.l][k.j][k.i];
     k.el.setAttribute('stroke', w >= 0 ? pos : neg);
-    k.el.setAttribute('stroke-width', Math.max(0.4, Math.min(9, Math.abs(w) * 2.4)).toFixed(2));
-    k.el.setAttribute('stroke-opacity', w === 0 ? '0.08' : Math.min(0.85, 0.25 + Math.abs(w) * 0.4).toFixed(2));
+    k.el.setAttribute('stroke-width', Math.max(0.8, Math.min(9, Math.abs(w) * 2.6)).toFixed(2));
+    k.el.setAttribute('stroke-opacity', w === 0 ? '0.08' : Math.min(0.95, 0.4 + Math.abs(w) * 0.45).toFixed(2));
   }
   nodeEls[0].forEach((n, r) => paint(n.cv, featVals[r]));
   for (let l = 1; l < nodeEls.length; l++) nodeEls[l].forEach((n, j) => {

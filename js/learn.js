@@ -1,7 +1,7 @@
-import { Network, ACTIVATIONS } from './nn.js?v=202611202325';
-import { makeData, normalFrom, rng } from './data.js?v=202611202325';
-import { BP, bpStep } from './backprop.js?v=202611202325';
-import { colormap, rebuildColormap } from './colors.js?v=202611202325';
+import { Network, ACTIVATIONS } from './nn.js?v=202611202351';
+import { makeData, normalFrom, rng } from './data.js?v=202611202351';
+import { BP, bpStep } from './backprop.js?v=202611202351';
+import { colormap, rebuildColormap } from './colors.js?v=202611202351';
 
 const $ = id => document.getElementById(id);
 const cssv = n => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
@@ -13,7 +13,7 @@ function setup(cv) {
   const dpr = window.devicePixelRatio || 1, W = cv.clientWidth, H = cv.clientHeight || W;
   if (cv.width !== Math.round(W * dpr) || cv.height !== Math.round(H * dpr)) { cv.width = Math.round(W * dpr); cv.height = Math.round(H * dpr); }
   const ctx = cv.getContext('2d'); ctx.setTransform(dpr, 0, 0, dpr, 0, 0); ctx.clearRect(0, 0, W, H);
-  ctx.font = '11.5px Inter, sans-serif';
+  ctx.font = '600 12.5px Barlow, sans-serif';
   return { ctx, W, H };
 }
 // Paint a function of (x, y) ∈ [-R, R]² onto a canvas as a heatmap.
@@ -232,7 +232,7 @@ function drawGD() {
       o.fillRect(i * cw, j * ch, cw + 0.6, ch + 0.6);
     }
     // marching squares contour lines
-    o.strokeStyle = 'rgba(0,0,0,.22)'; o.lineWidth = 1;
+    o.strokeStyle = 'rgba(0,0,0,.4)'; o.lineWidth = 1;
     const NL = 16;
     for (let k = 1; k < NL; k++) {
       const L = lo + (hi - lo) * k / NL; o.beginPath();

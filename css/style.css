@@ -1,10 +1,10 @@
 /* ============ NEURAL NETWORK LAB · mission-control theme (light) ============ */
 :root {
   --bg: #ffffff; --card: #ffffff; --card2: #f4f4f2; --solid: #fafafa;
-  --fg: #111111; --mut: #595959; --faint: #8c8c8c;
-  --line: rgba(0, 0, 0, .13); --line2: rgba(0, 0, 0, .34);
+  --fg: #000000; --mut: #2b2b2b; --faint: #4d4d4d;
+  --line: rgba(0, 0, 0, .28); --line2: rgba(0, 0, 0, .6);
   --acc: #111111; --acc2: #d0281a; --acc-soft: rgba(0, 0, 0, .04);
-  --pos: #111111; --neg: #d0281a; --ok: #111111; --warn: #d0281a; --bad: #d0281a;
+  --pos: #000000; --neg: #c81e10; --ok: #000000; --warn: #c81e10; --bad: #c81e10;
   --display: 'Barlow Condensed', 'Barlow', 'Helvetica Neue', Arial, sans-serif;
   --body: 'Barlow', 'Helvetica Neue', Arial, sans-serif;
   --mono: 'Roboto Mono', ui-monospace, monospace;
@@ -173,7 +173,7 @@ label.chk { display: flex; align-items: center; gap: 7px; font-size: 12px; color
 .card .btn { align-self: flex-start; margin-top: 8px; }
 .lvl.l4 { color: var(--neg); }
 .guide { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 18px; }
-.guide .card p { color: #333333; }
+.guide .card p { color: #111111; }
 .kbd { font-family: var(--mono); font-size: 11.5px; border: 1px solid var(--line2); padding: 0 6px; }
 footer.site { border-top: 1px solid var(--line); margin-top: 70px; }
 footer.site .in { max-width: 1480px; margin: 0 auto; padding: 26px 28px; display: flex; flex-wrap: wrap; gap: 10px 26px; justify-content: space-between; font-size: 12px; color: var(--faint); font-family: var(--mono); letter-spacing: .06em; text-transform: uppercase; }
@@ -201,7 +201,7 @@ footer.site a { color: var(--mut); }
 .lesson + .lesson { border-top: 1px solid var(--line); margin-top: 50px; }
 .lesson .num { font-family: var(--mono); color: var(--mut); font-size: 12px; letter-spacing: .22em; text-transform: uppercase; }
 .lesson h2 { font-size: 38px; margin: 8px 0 14px; }
-.lesson > p, .lesson li { font-size: 16.5px; max-width: 780px; color: #333333; }
+.lesson > p, .lesson li { font-size: 16.5px; max-width: 780px; color: #111111; }
 .lesson b { color: var(--fg); }
 .lesson .lead { font-size: 19px; color: var(--mut); }
 .widget { padding: 22px; margin: 22px 0; }
@@ -210,7 +210,7 @@ footer.site a { color: var(--mut); }
 .formula .p { color: var(--pos); } .formula .n { color: var(--neg); }
 .sl { display: grid; grid-template-columns: 70px 1fr 60px; gap: 10px; align-items: center; font-size: 13px; margin: 8px 0; font-family: var(--mono); color: var(--mut); }
 .sl .val { text-align: right; }
-.callout { border-left: 2px solid var(--fg); background: var(--acc-soft); padding: 12px 16px; margin: 20px 0; font-size: 15.5px; max-width: 780px; color: #333333; }
+.callout { border-left: 2px solid var(--fg); background: var(--acc-soft); padding: 12px 16px; margin: 20px 0; font-size: 15.5px; max-width: 780px; color: #111111; }
 .callout > b:first-child { display: block; font-family: var(--display); font-size: 14px; letter-spacing: .16em; text-transform: uppercase; color: var(--fg); margin-bottom: 2px; }
 .callout.exam { border-left-color: var(--neg); }
 .callout.exam > b:first-child { color: var(--neg); }
@@ -231,7 +231,7 @@ canvas.plot { width: 100%; display: block; border: 1px solid var(--line); }
 .bpexp { font-size: 15px; min-height: 120px; margin-top: 12px; }
 .bpexp .eq { font-family: var(--mono); font-size: 13px; background: var(--card2); border: 1px solid var(--line); border-left: 2px solid var(--fg); padding: 9px 11px; margin-top: 8px; white-space: pre-wrap; color: var(--fg); }
 table.gl { width: 100%; border-collapse: collapse; font-size: 15px; }
-table.gl td { border-bottom: 1px solid var(--line); padding: 10px 8px; vertical-align: top; color: #333333; }
+table.gl td { border-bottom: 1px solid var(--line); padding: 10px 8px; vertical-align: top; color: #111111; }
 table.gl td:first-child { width: 220px; font-family: var(--display); font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: var(--fg); }
 .gsearch { width: 100%; max-width: 380px; padding: 9px 12px; border: 1px solid var(--line2); background: var(--bg); color: var(--fg); font-family: var(--mono); margin-bottom: 12px; }
 .quiz .q { border: 1px solid var(--line); padding: 14px 16px; margin-bottom: -1px; background: transparent; }
@@ -355,11 +355,11 @@ body.mission-on { --map: clamp(200px, min(calc(100vh - 430px), 33vw, calc(100vw 
 .cite { margin-top: 12px; font-size: 13px; color: var(--mut); font-family: var(--mono); border-left: 2px solid var(--line2); padding: 6px 12px; }
 .cite span { display: block; font-family: var(--display); font-weight: 600; letter-spacing: .16em; text-transform: uppercase; color: var(--fg); font-size: 12px; margin-bottom: 2px; }
 .inspo { border-left: 2px solid var(--fg); padding: 4px 0 4px 20px; max-width: 900px; }
-.inspo p { font-size: 16.5px; color: #333333; margin: 8px 0; }
+.inspo p { font-size: 16.5px; color: #111111; margin: 8px 0; }
 .ilabel { font-family: var(--mono); font-size: 12px; letter-spacing: .2em; text-transform: uppercase; color: var(--mut); }
 .academyintro { padding-top: 40px; max-width: 780px; }
 .academyintro .num { font-family: var(--mono); color: var(--mut); font-size: 12px; letter-spacing: .22em; text-transform: uppercase; }
-.academyintro p { font-size: 15.5px; color: #333333; border-left: 2px solid var(--fg); padding-left: 14px; }
+.academyintro p { font-size: 15.5px; color: #111111; border-left: 2px solid var(--fg); padding-left: 14px; }
 @media (min-width: 1100px) and (max-width: 1500px) {
   .controls { gap: 8px 14px; }
   .ctl > span { letter-spacing: .1em; font-size: 10px; }
@@ -445,3 +445,23 @@ body.mission-on { --map: clamp(200px, min(calc(100vh - 430px), 33vw, calc(100vw 
 /* light theme: no starfield */
 #fxcanvas, #fxbtn { display: none !important; }
 .panel, .controls, .widget { box-shadow: 0 1px 2px rgba(0,0,0,.04); }
+
+/* ---------- Projector-friendly: darker, bolder text ---------- */
+body { font-weight: 500; }
+h1, h2, h3, h4, .brand, .rtitle { font-weight: 700; }
+b, strong { font-weight: 700; }
+code, .mono, .val, select, input[type=number], .formula, .bpexp .eq, .probe, .legend, .featlabel, .axis, .scalelbl, .nettip, .toc a, .cite, .rfacts, .sl, .facts div, .score, .gsearch, .status, .hero .kicker, .lesson .num, .card .lvl, .ilabel, footer.site .in { font-weight: 500; }
+.epoch b, .stat b { font-weight: 500; color: #000; }
+.ctl > span, .stat span, .epoch, .colhead, .nav nav a, .btn, .pill, .panel h3, .tagn, .facts div span { font-weight: 700; }
+.tagn { color: var(--mut); }
+.nettip, .axis, .scalelbl { font-size: 11.5px; }
+.ctl > span { font-size: 11.5px; }
+.stat span { font-size: 11.5px; }
+.featlabel { font-size: 13px; color: #000; }
+.colhead { font-size: 11.5px; color: #000; }
+.sub, .row, .card p, .hero p, .section > p.lead, .lesson .lead { color: var(--mut); }
+.lesson > p, .lesson li, .callout, table.gl td, .inspo p, .academyintro p, .guide .card p { color: #000; }
+input[type=range]::-webkit-slider-runnable-track { height: 2px; background: rgba(0,0,0,.7); }
+input[type=range]::-moz-range-track { height: 2px; background: rgba(0,0,0,.7); }
+.bp-svg text { font-weight: 500; font-size: 13px; }
+.bp-svg .lab { font-weight: 600; }
