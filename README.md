@@ -4,7 +4,7 @@
 
 A mission-control-style training console for neural networks. Design a network, launch training, and watch every neuron learn in real time. It includes guided missions and an academy of interactive lessons.
 
-**Look and feel:** a black, minimal aerospace-style interface: condensed uppercase type, thin rules, a quiet starfield and a short launch countdown. White means positive and red means negative.
+**Look and feel:** a clean, light, minimal aerospace-style interface: white background, black condensed uppercase type, thin rules and red as the only accent colour. On every map red is one class and black the other.
 
 ## Console (`index.html`)
 - **8 datasets:** six classification (circle, XOR, Gaussian, spiral, two moons, checkerboard) and two regression (plane, multi-Gaussian). You can set the noise, the train/test split and the batch size.

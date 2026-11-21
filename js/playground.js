@@ -1,7 +1,7 @@
-import { CLASS_DATASETS, REG_DATASETS, FEATURES, makeData } from './data.js?v=202611190245';
-import { Network, ACTIVATIONS } from './nn.js?v=202611190245';
-import { colormap, rebuildColormap } from './colors.js?v=202611190245';
-import { CH } from './missions.js?v=202611190245';
+import { CLASS_DATASETS, REG_DATASETS, FEATURES, makeData } from './data.js?v=202611202325';
+import { Network, ACTIVATIONS } from './nn.js?v=202611202325';
+import { colormap, rebuildColormap } from './colors.js?v=202611202325';
+import { CH } from './missions.js?v=202611202325';
 
 const $ = id => document.getElementById(id);
 const LRS = [0.00001, 0.0001, 0.001, 0.003, 0.01, 0.03, 0.1, 0.3, 1, 3, 10];
@@ -148,7 +148,7 @@ function drawOutput() {
       const c = colormap(S.problem === 'class' ? p.label : p.label);
       ctx.beginPath(); ctx.arc(P(p.x), Q(p.y), r, 0, 7);
       ctx.fillStyle = `rgb(${c[0]},${c[1]},${c[2]})`; ctx.fill();
-      ctx.lineWidth = (isTest ? 1.8 : 1) * dpr; ctx.strokeStyle = isTest ? '#ffffff' : (p.label > 0 ? 'rgba(220,220,220,.85)' : 'rgba(0,0,0,.85)'); ctx.stroke();
+      ctx.lineWidth = (isTest ? 1.8 : 1) * dpr; ctx.strokeStyle = isTest ? '#8c8c8c' : '#ffffff'; ctx.stroke();
     }
   };
   if (!hover) { drawPts(train, false); if (S.showTest) drawPts(test, true); }
@@ -172,7 +172,7 @@ function drawLossChart() {
   ctx.font = '10.5px "Roboto Mono", monospace'; ctx.lineWidth = 1;
   for (let k = 0; k <= 4; k++) {
     const v = max * k / 4, y = Math.round(T + ph - v / max * ph) + .5;
-    ctx.strokeStyle = k ? 'rgba(255,255,255,.07)' : cv('--line2'); ctx.beginPath(); ctx.moveTo(L, y); ctx.lineTo(L + pw, y); ctx.stroke();
+    ctx.strokeStyle = k ? 'rgba(0,0,0,.08)' : cv('--line2'); ctx.beginPath(); ctx.moveTo(L, y); ctx.lineTo(L + pw, y); ctx.stroke();
     ctx.fillStyle = cv('--faint'); ctx.textAlign = 'right'; ctx.fillText(v.toFixed(max < 0.5 ? 2 : 1), L - 6, y + 3.5);
   }
   ctx.textAlign = 'left'; ctx.fillText('0', L, h - 5);

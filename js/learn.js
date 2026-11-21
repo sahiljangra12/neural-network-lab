@@ -1,7 +1,7 @@
-import { Network, ACTIVATIONS } from './nn.js?v=202611190245';
-import { makeData, normalFrom, rng } from './data.js?v=202611190245';
-import { BP, bpStep } from './backprop.js?v=202611190245';
-import { colormap, rebuildColormap } from './colors.js?v=202611190245';
+import { Network, ACTIVATIONS } from './nn.js?v=202611202325';
+import { makeData, normalFrom, rng } from './data.js?v=202611202325';
+import { BP, bpStep } from './backprop.js?v=202611202325';
+import { colormap, rebuildColormap } from './colors.js?v=202611202325';
 
 const $ = id => document.getElementById(id);
 const cssv = n => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
@@ -33,7 +33,7 @@ function points(ctx, W, H, pts, R = 6, r = 3) {
   for (const p of pts) {
     const c = colormap(p.label);
     ctx.beginPath(); ctx.arc((p.x + R) / (2 * R) * W, (R - p.y) / (2 * R) * H, r, 0, 7);
-    ctx.fillStyle = `rgb(${c})`; ctx.fill(); ctx.strokeStyle = p.label > 0 ? 'rgba(220,220,220,.85)' : 'rgba(0,0,0,.85)'; ctx.lineWidth = 1; ctx.stroke();
+    ctx.fillStyle = `rgb(${c})`; ctx.fill(); ctx.strokeStyle = '#ffffff'; ctx.lineWidth = 1; ctx.stroke();
   }
 }
 function pills(el, items, cur, onPick) {
@@ -224,7 +224,7 @@ function drawGD() {
     let lo = Infinity, hi = -Infinity;
     for (const row of v) for (let i = 0; i < row.length; i++) { row[i] = Math.log(row[i] - min + 0.03); lo = Math.min(lo, row[i]); hi = Math.max(hi, row[i]); }
     const dark = document.documentElement.getAttribute('data-theme') === 'dark';
-    const base = [6, 6, 6], tint = [150, 165, 185];
+    const base = [255, 255, 255], tint = [110, 118, 130];
     const cw = W / res, ch = H / res;
     for (let j = 0; j < res; j++) for (let i = 0; i < res; i++) {
       const t = 1 - (v[j][i] - lo) / (hi - lo), m = 0.06 + 0.34 * t;
@@ -232,7 +232,7 @@ function drawGD() {
       o.fillRect(i * cw, j * ch, cw + 0.6, ch + 0.6);
     }
     // marching squares contour lines
-    o.strokeStyle = 'rgba(255,255,255,.28)'; o.lineWidth = 1;
+    o.strokeStyle = 'rgba(0,0,0,.22)'; o.lineWidth = 1;
     const NL = 16;
     for (let k = 1; k < NL; k++) {
       const L = lo + (hi - lo) * k / NL; o.beginPath();

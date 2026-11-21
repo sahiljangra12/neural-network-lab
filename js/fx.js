@@ -1,9 +1,8 @@
 // Quiet starfield background and a short launch sequence.
 (function () {
-  document.documentElement.setAttribute('data-theme', 'dark');
+  document.documentElement.setAttribute('data-theme', 'light');
   var reduce = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
-  var fx = true;
-  try { var s = localStorage.getItem('nnl-fx'); if (s !== null) fx = s === '1'; } catch (e) {}
+  var fx = false;
 
   document.addEventListener('DOMContentLoaded', function () {
     document.body.classList.toggle('fx', fx);
