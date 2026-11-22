@@ -498,3 +498,10 @@ footer.site { background: #fff; border-top: 2px solid #000; }
 .toc a { background: #fff; }
 .section > p.lead, .hero p { color: #000; }
 @media (max-width: 860px) { .learn > main { padding: 0 14px 28px; margin-top: 14px; } .learn { padding-left: 10px; padding-right: 10px; } }
+
+/* Small phones: keep the glossary table inside the screen. */
+@media (max-width: 480px) {
+  table.gl { table-layout: fixed; font-size: 14px; }
+  table.gl td { padding: 8px 6px; overflow-wrap: anywhere; }
+  table.gl td:first-child { width: 104px; letter-spacing: .04em; }
+}
