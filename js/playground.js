@@ -1,7 +1,7 @@
-import { CLASS_DATASETS, REG_DATASETS, FEATURES, makeData } from './data.js?v=202611210024';
-import { Network, ACTIVATIONS } from './nn.js?v=202611210024';
-import { colormap, rebuildColormap } from './colors.js?v=202611210024';
-import { CH } from './missions.js?v=202611210024';
+import { CLASS_DATASETS, REG_DATASETS, FEATURES, makeData } from './data.js?v=202611240319';
+import { Network, ACTIVATIONS } from './nn.js?v=202611240319';
+import { colormap, rebuildColormap } from './colors.js?v=202611240319';
+import { CH } from './missions.js?v=202611240319';
 
 const $ = id => document.getElementById(id);
 const LRS = [0.00001, 0.0001, 0.001, 0.003, 0.01, 0.03, 0.1, 0.3, 1, 3, 10];

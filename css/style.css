@@ -505,3 +505,24 @@ footer.site { background: #fff; border-top: 2px solid #000; }
   table.gl td { padding: 8px 6px; overflow-wrap: anywhere; }
   table.gl td:first-child { width: 104px; letter-spacing: .04em; }
 }
+
+/* Phones: finger-sized controls and readable labels */
+@media (max-width: 860px) {
+  .nav nav a { display: inline-flex; align-items: center; min-height: 44px; font-size: 12px; }
+  .nav nav a.on::after { bottom: 0; }
+  .nav .brand { min-width: 44px; min-height: 44px; justify-content: center; }
+  .controls .ctl select, .widget select, .field select { min-height: 44px; font-size: 14px; }
+  .roundbtn, .nethead .roundbtn { width: 44px; height: 44px; }
+  .btn.sm { min-height: 44px; padding-top: 0; padding-bottom: 0; }
+  .colhead .pm button { width: 34px; height: 34px; }
+  label.chk { min-height: 44px; font-size: 13px; }
+  label.chk input { width: 20px; height: 20px; }
+  .pill { min-height: 44px; font-size: 12.5px; }
+  input[type=range] { min-height: 36px; }
+  .ctl span, .stat span, .lvl, .rfacts span, .scalelbl span, .axis span, .nettip, .legend span { font-size: 12px; }
+}
+@media (max-width: 860px) {
+  .nethead .layers .roundbtn { width: 40px; height: 40px; }
+  .colhead .pm button { min-width: 34px; }
+  .card .lvl, .widget .facts span, .widget b { font-size: 12px; }
+}
