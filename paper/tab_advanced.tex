@@ -1,0 +1,11 @@
+Softmax probabilities sum to one & exact identity & $2.2\times 10^{-16}$ \\
+Softmax cross-entropy gradient $(p - y)/T$ & finite differences & $3.0\times 10^{-7}$ \\
+Deep and residual backward pass & finite differences & $3.1\times 10^{-6}$ \\
+Dropout network with $p = 0$ & the site's engine, 20 epochs & 0 \\
+Dropout gradient with a fixed mask & finite differences & $5.3\times 10^{-6}$ \\
+Convolution feature map & direct recomputation & 0 \\
+Max-pooling & direct recomputation & 0 \\
+Recurrent influence $\partial h_T/\partial h_0$ & finite differences & $1.2\times 10^{-5}$ \\
+Attention weights sum to one & exact identity & $2.2\times 10^{-16}$ \\
+Attention output is the weighted average & direct recomputation & 0 \\
+Causal mask gives zero weight to later words & exact identity & 0 \\

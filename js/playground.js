@@ -1,7 +1,7 @@
-import { CLASS_DATASETS, REG_DATASETS, FEATURES, makeData } from './data.js?v=202611240835';
-import { Network, ACTIVATIONS } from './nn.js?v=202611240835';
-import { colormap, rebuildColormap } from './colors.js?v=202611240835';
-import { CH } from './missions.js?v=202611240835';
+import { CLASS_DATASETS, REG_DATASETS, FEATURES, makeData } from './data.js?v=202611261442';
+import { Network, ACTIVATIONS } from './nn.js?v=202611261442';
+import { colormap, rebuildColormap } from './colors.js?v=202611261442';
+import { CH } from './missions.js?v=202611261442';
 
 const $ = id => document.getElementById(id);
 const LRS = [0.00001, 0.0001, 0.001, 0.003, 0.01, 0.03, 0.1, 0.3, 1, 3, 10];
@@ -154,7 +154,7 @@ function drawOutput() {
   if (!hover) { drawPts(train, false); if (S.showTest) drawPts(test, true); }
   if (hover) {
     ctx.fillStyle = 'rgba(0,0,0,.55)'; ctx.fillRect(0, 0, W, 26 * dpr);
-    ctx.fillStyle = '#fff'; ctx.font = `${12 * dpr}px Inter, sans-serif`;
+    ctx.fillStyle = '#fff'; ctx.font = `${12 * dpr}px Inter, system-ui, sans-serif`;
     const name = hover.l === 0 ? `Input feature ${FEATURES[hover.j].label}` : hover.l === L ? 'Output neuron' : `Layer ${hover.l}, neuron ${hover.j + 1}: what this neuron detects`;
     ctx.fillText(name, 9 * dpr, 17 * dpr);
   }
@@ -169,10 +169,10 @@ function drawLossChart() {
   const L = 44, B = 20, T = 6, Rm = 8, pw = w - L - Rm, ph = h - T - B;
   const all = hist.train.concat(hist.test).filter(isFinite);
   const max = niceMax(Math.max(0.05, ...all));
-  ctx.font = '500 11.5px "Roboto Mono", monospace'; ctx.lineWidth = 1;
+  ctx.font = '500 11.5px "IBM Plex Mono", monospace'; ctx.lineWidth = 1;
   for (let k = 0; k <= 4; k++) {
     const v = max * k / 4, y = Math.round(T + ph - v / max * ph) + .5;
-    ctx.strokeStyle = k ? 'rgba(0,0,0,.16)' : cv('--line2'); ctx.beginPath(); ctx.moveTo(L, y); ctx.lineTo(L + pw, y); ctx.stroke();
+    ctx.strokeStyle = k ? 'rgba(0,0,0,.13)' : cv('--line2'); ctx.beginPath(); ctx.moveTo(L, y); ctx.lineTo(L + pw, y); ctx.stroke();
     ctx.fillStyle = cv('--faint'); ctx.textAlign = 'right'; ctx.fillText(v.toFixed(max < 0.5 ? 2 : 1), L - 6, y + 3.5);
   }
   ctx.textAlign = 'left'; ctx.fillText('0', L, h - 5);
@@ -187,7 +187,7 @@ function drawLossChart() {
   line(hist.test, cv('--neg'), 2.4);
   line(hist.train, cv('--fg'), 2.6);
   const last = arr => arr.length ? arr[arr.length - 1] : NaN;
-  ctx.textAlign = 'right'; ctx.font = '600 12.5px "Roboto Mono", monospace';
+  ctx.textAlign = 'right'; ctx.font = '600 12.5px "IBM Plex Mono", monospace';
   if (isFinite(last(hist.train))) { ctx.fillStyle = cv('--fg'); ctx.fillText(`train ${last(hist.train).toFixed(3)}`, L + pw, T + 12); }
   if (test.length && isFinite(last(hist.test))) { ctx.fillStyle = cv('--neg'); ctx.fillText(`test ${last(hist.test).toFixed(3)}`, L + pw, T + 26); }
 }

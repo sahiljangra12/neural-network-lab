@@ -2,7 +2,7 @@
 // Classification: sigmoid output + log loss (the output neuron IS logistic regression).
 // Regression: linear output + squared error.
 
-import { rng, normalFrom } from './data.js?v=202611240835';
+import { rng, normalFrom } from './data.js?v=202611261442';
 
 export const ACTIVATIONS = {
   relu: { name: 'ReLU', f: z => (z > 0 ? z : 0), d: (z) => (z > 0 ? 1 : 0), formula: 'max(0, z)' },

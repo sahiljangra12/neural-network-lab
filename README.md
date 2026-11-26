@@ -4,7 +4,7 @@
 
 A mission-control-style training console for neural networks. Design a network, launch training, and watch every neuron learn in real time. It includes guided missions and an academy of interactive lessons.
 
-**Look and feel:** a clean, light, minimal aerospace-style interface: white background, black condensed uppercase type, thin rules and red as the only accent colour. On every map red is one class and black the other.
+**Look and feel:** a light, scientific-journal style: paper-coloured page, serif headings and prose, panels presented as numbered figures, black ink with red as the only accent colour.
 
 ## Console (`index.html`)
 - **8 datasets:** six classification (circle, XOR, Gaussian, spiral, two moons, checkerboard) and two regression (plane, multi-Gaussian). You can set the noise, the train/test split and the batch size.
@@ -27,8 +27,19 @@ A mission-control-style training console for neural networks. Design a network, 
 7. **Overfitting and regularization:** live train/test loss with and without L2 weight decay.
 8. **Glossary** (searchable) and a **16-question true/false quiz** with justifications.
 
+## Advanced (`advanced.html`)
+Six interactive modules on the ideas behind modern deep networks, each computed live:
+1. **Softmax and temperature:** logits to a probability distribution, cross-entropy and its gradient.
+2. **Deep networks and skip connections:** watch gradients vanish or explode through up to 40 layers; fix them with Xavier/He initialization or residual paths.
+3. **Dropout:** two networks train side by side on noisy data, one with dropout.
+4. **Convolution:** draw an image, edit a 3 × 3 kernel, see the feature map and max-pooling.
+5. **Recurrent memory:** how long a recurrent unit remembers, why it fades, and how a gate keeps it.
+6. **Attention:** click a word to see what it attends to, with or without a causal (GPT-style) mask. The word vectors are a hand-made toy, not a trained model.
+
+The maths is in `js/advmath.js` and is verified by `node tools/check_advanced.mjs` (finite-difference gradient checks and direct recomputation).
+
 ## Technical report
-**[Read the technical report (PDF)](report/neural-network-lab-technical-report.pdf)**: 16 pages covering the engine's equations, the system design and a reproducible evaluation: an independent re-implementation in JAX/Optax that reproduces 18 complete training runs to machine precision, agreement with the closed-form logistic-regression MLE (scikit-learn) and least-squares solution, a gradient check, mission benchmarks, model capacity, overfitting with L2 and a learning-rate sweep. Every number, table and figure is generated from the site's own code:
+**[Read the technical report (PDF)](report/neural-network-lab-technical-report.pdf)**: 19 pages covering the engine's equations, the system design and a reproducible evaluation: an independent re-implementation in JAX/Optax that reproduces 18 complete training runs to machine precision, agreement with the closed-form logistic-regression MLE (scikit-learn) and least-squares solution, a gradient check, mission benchmarks, model capacity, overfitting with L2 and a learning-rate sweep. Every number, table and figure is generated from the site's own code:
 
 ```bash
 node tools/benchmark.mjs      # runs the experiments, writes paper/results.json, stats.tex and tables

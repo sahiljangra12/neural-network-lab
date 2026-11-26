@@ -42,7 +42,7 @@
 
 \begin{abstract}
 \noindent
-Neural networks are usually taught through equations and static diagrams, which hide the part students find hardest: how a network's internal representation changes while it is trained. Neural Network Lab is an open, dependency-free website in which a learner builds a multilayer perceptron, trains it live in the browser with backpropagation, and watches what every neuron computes at every epoch. The site has two parts. The \emph{Console} is a single-screen training environment with eight synthetic datasets, seven input features, up to six hidden layers, five activation functions, three optimisers and L1/L2 regularisation, together with a rule-based diagnostics panel that explains failures such as divergence, overfitting, dead ReLUs and the collapse of all-linear networks, and \nMissions{} guided missions. The \emph{Academy} is a set of seven interactive lessons, from a single neuron to backpropagation computed number by number, with a glossary and a true/false quiz. The project grew out of \courseName{} at Johns Hopkins University, taught by \profName{}, and each lesson connects a neural-network idea to a statistical one: a sigmoid neuron is logistic regression, log loss is a negative log-likelihood, hidden layers are learned basis expansions, and weight decay is ridge regression. The learning engine is about \nnLines{} lines of JavaScript. Its analytic gradients agree with finite differences to a maximum relative error of $\gcMax$ over \gcParams{} parameters in \gcCases{} configurations. Replayed in an independent JAX/Optax implementation from identical starting points, \xcRuns{} complete training runs covering every activation, optimiser and penalty agree with the site to within $\xcParam$ in every parameter, at the limit of 64-bit arithmetic. A network with no hidden layer converges to the logistic-regression maximum-likelihood estimate and the least-squares solution computed by standard statistical software. Every number in this report is produced by a script that runs the site's own engine with \nSeeds{} seeds, so the report and the website cannot disagree.
+Neural networks are usually taught through equations and static diagrams, which hide the part students find hardest: how a network's internal representation changes while it is trained. Neural Network Lab is an open, dependency-free website in which a learner builds a multilayer perceptron, trains it live in the browser with backpropagation, and watches what every neuron computes at every epoch. The site has three parts. The \emph{Console} is a single-screen training environment with eight synthetic datasets, seven input features, up to six hidden layers, five activation functions, three optimisers and L1/L2 regularisation, together with a rule-based diagnostics panel that explains failures such as divergence, overfitting, dead ReLUs and the collapse of all-linear networks, and \nMissions{} guided missions. The \emph{Academy} is a set of seven interactive lessons, from a single neuron to backpropagation computed number by number, with a glossary and a true/false quiz. An \emph{Advanced} section adds six further interactive modules on softmax, deep networks and skip connections, dropout, convolution, recurrent memory and attention. The project grew out of \courseName{} at Johns Hopkins University, taught by \profName{}, and each lesson connects a neural-network idea to a statistical one: a sigmoid neuron is logistic regression, log loss is a negative log-likelihood, hidden layers are learned basis expansions, and weight decay is ridge regression. The learning engine is about \nnLines{} lines of JavaScript. Its analytic gradients agree with finite differences to a maximum relative error of $\gcMax$ over \gcParams{} parameters in \gcCases{} configurations. Replayed in an independent JAX/Optax implementation from identical starting points, \xcRuns{} complete training runs covering every activation, optimiser and penalty agree with the site to within $\xcParam$ in every parameter, at the limit of 64-bit arithmetic. A network with no hidden layer converges to the logistic-regression maximum-likelihood estimate and the least-squares solution computed by standard statistical software. Every number in this report is produced by a script that runs the site's own engine with \nSeeds{} seeds, so the report and the website cannot disagree.
 \end{abstract}
 
 \noindent\textbf{Keywords:} neural networks; backpropagation; interactive visualisation; statistics education; logistic regression; regularisation; bias--variance trade-off; open educational software
@@ -58,6 +58,7 @@ A multilayer perceptron is a short formula, yet what it \emph{does} during train
 \begin{enumerate}[label=(\roman*)]
   \item A self-contained learning engine (\cref{sec:engine}): a multilayer perceptron with backpropagation, mini-batch training, SGD, momentum and Adam, and L1/L2 penalties, written in plain JavaScript with no libraries and verified against numerical gradients (\cref{sec:gradcheck}).
   \item A single-screen training console (\cref{sec:console}) that shows every neuron's output over the input plane, lets the learner edit any weight, encodes the full configuration in a shareable link, and explains what it sees through a rule-based diagnostics panel.
+  \item An Advanced section (\cref{sec:advanced}) of six interactive modules on the ideas behind modern deep networks, whose mathematics is checked numerically (\cref{sec:advcheck}).
   \item A curriculum (\cref{sec:academy}) of \nMissions{} guided missions and seven interactive lessons that link neural-network behaviour to statistical concepts, with a glossary and a quiz written in the style of true/false examination questions with justification.
   \item An independent verification (\cref{sec:xcheck}): full training runs are replayed in JAX and Optax and match the site to machine precision, and the no-hidden-layer model reproduces closed-form statistical estimates.
   \item A reproducible evaluation (\cref{sec:validation}): every number, table and figure in this report is regenerated by scripts that run the website's own engine.
@@ -73,7 +74,7 @@ Interactive explanations of deep learning are surveyed by \citet{hohman2019visua
 % =====================================================================
 \section{System overview}\label{sec:overview}
 
-The site is static: two HTML pages, one stylesheet and ES modules, served by GitHub Pages with no build step and no third-party JavaScript (\cref{tab:code}). Everything, including training, runs in the visitor's browser, so no data leave the device. The Console (\code{index.html}) and the Academy (\code{learn.html}) share the engine (\code{nn.js}), the data generators (\code{data.js}) and a diverging colour scale (\code{colors.js}). The complete configuration of the Console---data set, noise, split, batch size, features, layer sizes, activation, optimiser, learning rate and penalty---is written into the page address after every change, so any state can be shared as a link. The interface uses a restrained light design in black and white with red as its only colour: on every map red marks one class (or negative values) and black the other. Decorative effects can be switched off, and the site follows the operating system's reduced-motion setting.
+The site is static: three HTML pages, two stylesheets and ES modules, served by GitHub Pages with no build step and no third-party JavaScript (\cref{tab:code}). Everything, including training, runs in the visitor's browser, so no data leave the device. The Console (\code{index.html}) and the Academy (\code{learn.html}) share the engine (\code{nn.js}), the data generators (\code{data.js}) and a diverging colour scale (\code{colors.js}). The complete configuration of the Console---data set, noise, split, batch size, features, layer sizes, activation, optimiser, learning rate and penalty---is written into the page address after every change, so any state can be shared as a link. The interface is styled like a scientific article: a paper-coloured page, serif headings and prose, and panels presented as numbered figures, in black ink with red as the only colour. On every map red marks one class (or negative values) and black the other. Decorative effects can be switched off, and the site follows the operating system's reduced-motion setting.
 
 \begin{table}[!htbp]
 \centering\small
@@ -214,6 +215,37 @@ Lesson & Interactive widget & Connection to the course \\
 \end{figure}
 
 % =====================================================================
+\section{The Advanced section}\label{sec:advanced}
+
+The Console and the Academy cover a fully connected network. The Advanced page adds six modules on the ideas that separate that network from modern deep learning (\cref{tab:advanced}). Each is a live computation, not an animation; the mathematics is in \code{js/advmath.js}.
+
+\begin{table}[!htbp]
+\centering\small
+\caption{Advanced modules.}\label{tab:advanced}
+\begin{tabularx}{\textwidth}{l >{\raggedright\arraybackslash}X >{\raggedright\arraybackslash}X}
+\toprule
+Module & What the learner controls & What it computes \\
+\midrule
+1. Softmax \& temperature & Four logits, the temperature $T$ and the true class & $p_k = e^{z_k/T}/\sum_j e^{z_j/T}$, the cross-entropy and its gradient $p - y$ \\
+2. Deep networks & Depth (2--40), activation, weight-initialisation variance, plain or residual & RMS of activations and of back-propagated gradients at every layer of a 32-unit-wide network, averaged over 12 random inputs \\
+3. Dropout & Dropout rate $p$ & Two 2--16--16--1 networks trained on 40 noisy points, one with inverted dropout; training and test loss \\
+4. Convolution & A $12\times12$ drawable image and an editable $3\times3$ kernel & The $10\times10$ feature map, ReLU, and $2\times2$ max-pooling \\
+5. Recurrent memory & Recurrent weight $w$, input weight $u$, gate $g$, length $T$ & $h_t = (1-g)h_{t-1} + g\tanh(w h_{t-1} + u x_t)$ for a single input pulse, and the influence $\partial h_T/\partial h_t$ \\
+6. Attention & Query word, sharpness $\beta$, causal mask & Scaled dot-product self-attention weights $\mathrm{softmax}(\beta\, e_i^\top e_j/\sqrt{d})$ over a ten-word sentence \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\begin{figure}[!htbp]
+\centering
+\includegraphics[width=0.78\textwidth]{fig_deep.jpg}\\[6pt]
+\includegraphics[width=0.66\textwidth]{fig_attention.jpg}
+\caption{Two Advanced modules. Top: signal (black) and gradient (red) through a 20-layer sigmoid network with Xavier initialisation; the gradient shrinks by about thirteen orders of magnitude on the way back. Bottom: self-attention over a ten-word sentence with the query word ``it''.}\label{fig:advanced}
+\end{figure}
+
+The modules continue the statistical thread: softmax with cross-entropy is multinomial logistic regression \citep[chap.~4]{hastie2009esl}; dropout \citep{srivastava2014dropout} is presented as a variance-reducing regulariser alongside ridge; and convolution \citep{lecun1998gradient} is presented as parameter sharing, with nine weights where a dense layer between the same sizes would need 14{,}400. The deep-network module shows vanishing and exploding gradients directly and lets the learner repair them with the initialisations of \citet{glorot2010understanding} and \citet{he2015delving} or with residual connections \citep{he2016deep}. The recurrent module shows the same effect through time and how a gate that carries the state forward, the idea behind the LSTM \citep{hochreiter1997long}, preserves it. The attention module \citep{vaswani2017attention} uses hand-made four-dimensional word vectors, which the page states plainly; it illustrates the mechanism and is not a trained language model.
+
+% =====================================================================
 \section{Technical validation}\label{sec:validation}
 
 All experiments below run the website's own modules (\code{js/nn.js}, \code{js/data.js}, \code{js/missions.js}) under Node.js with the same training procedure as the Console and seeded random numbers. Each experiment is repeated with \nSeeds{} seeds for the network's initial weights and the shuffling order; results are reported as mean $\pm$ standard deviation. The complete benchmark took \runtime{} seconds.
@@ -319,13 +351,28 @@ Learning rate $\eta$ & Final loss & Diverged \\
 \caption{Training loss over epochs for eight learning rates (first seed); red curves are the rates that are too large.}\label{fig:lr}
 \end{figure}
 
+\subsection{Advanced-section mathematics}\label{sec:advcheck}
+The functions behind the Advanced modules are tested by \code{tools/check\_advanced.mjs} (\cref{tab:advcheck}). Analytic derivatives are compared with central finite differences on random inputs; the dropout network with $p = 0$ is trained beside the site's engine and must give identical weights; and the convolution, pooling and attention outputs are recomputed directly.
+
+\begin{table}[!htbp]
+\centering\small
+\caption{Checks of the Advanced section's mathematics. The last column is the largest error found (relative error for finite-difference comparisons, absolute otherwise).}\label{tab:advcheck}
+\begin{tabular}{l l c}
+\toprule
+Quantity & Compared with & Largest error \\
+\midrule
+\inputtab{tab_advanced.tex}
+\bottomrule
+\end{tabular}
+\end{table}
+
 \subsection{Speed and browser testing}
-In Node.js one epoch on 250 training points took \msSmall{}~ms for the default \pSmall-parameter network and \msLarge{}~ms for a \pLarge-parameter spiral network; recomputing all neuron maps (2{,}500 forward passes) took \gridMs{}~ms. Training one epoch per animation frame therefore leaves most of each frame for drawing. Both pages were loaded in headless Chrome at $1280\times720$, $1366\times768$, $1440\times900$ and $1920\times1080$ pixels and on a $390\times844$ phone viewport. In every case there were no script errors, and on the desktop sizes the Console's content fitted the window without scrolling.
+In Node.js one epoch on 250 training points took \msSmall{}~ms for the default \pSmall-parameter network and \msLarge{}~ms for a \pLarge-parameter spiral network; recomputing all neuron maps (2{,}500 forward passes) took \gridMs{}~ms. Training one epoch per animation frame therefore leaves most of each frame for drawing. All three pages were loaded in headless Chrome at $1280\times720$, $1366\times768$, $1440\times900$ and $1920\times1080$ pixels and on a $390\times844$ phone viewport. In every case there were no script errors, and on the desktop sizes the Console's content fitted the window without scrolling.
 
 % =====================================================================
 \section{Limitations}\label{sec:limits}
 
-The networks are small and the data are two-dimensional, which is what makes every neuron drawable; the site does not show convolutional, recurrent or attention-based networks, and lessons learned on toy data do not all carry over to high-dimensional problems. The engine uses double-precision JavaScript arithmetic on the main thread, so very large networks would slow the animation. The diagnostic rules are heuristics with fixed thresholds: they can miss a problem, or describe a correct run too cautiously. Accuracy in the Console is measured on a single random split, not by cross-validation. Finally, the site has not yet been evaluated with learners, so its educational benefit is a design goal rather than a measured result.
+The networks are small and the data are two-dimensional, which is what makes every neuron drawable; the Advanced section demonstrates single convolutional, recurrent and attention operations but does not train such networks end to end, its attention example uses hand-made word vectors, and lessons learned on toy data do not all carry over to high-dimensional problems. The engine uses double-precision JavaScript arithmetic on the main thread, so very large networks would slow the animation. The diagnostic rules are heuristics with fixed thresholds: they can miss a problem, or describe a correct run too cautiously. Accuracy in the Console is measured on a single random split, not by cross-validation. Finally, the site has not yet been evaluated with learners, so its educational benefit is a design goal rather than a measured result.
 
 % =====================================================================
 \section{Conclusion}
@@ -333,7 +380,7 @@ The networks are small and the data are two-dimensional, which is what makes eve
 Neural Network Lab lets a learner train a neural network in the browser, see what every neuron computes at every step, and read why the network succeeds or fails. By tying each behaviour to a statistical idea---logistic regression, likelihood, basis expansion, the bias--variance trade-off and ridge and lasso penalties---it is meant to help students who learn neural networks after a statistics course see the neural network as an extension of models they already understand. The engine's gradients are verified numerically, its complete training runs are reproduced to machine precision by an independent JAX implementation, and every result in this report is regenerated from the site's own code.
 
 \paragraph{Availability.} The website is at \siteurl{} and the source code, benchmark scripts and this report's \LaTeX{} source are at \url{https://github.com/sahiljangra12/neural-network-lab}. To reproduce the results, run
-\begin{center}\small\code{node tools/benchmark.mjs; node tools/export\_trace.mjs}\\\code{python3 tools/crosscheck.py; python3 tools/figures.py}\end{center}
+\begin{center}\small\code{node tools/benchmark.mjs; node tools/export\_trace.mjs}\\\code{python3 tools/crosscheck.py; node tools/check\_advanced.mjs}\\\code{python3 tools/figures.py}\end{center}
 and compile \code{paper/neural\_network\_lab.tex}.
 
 \paragraph{Acknowledgements.} This project was inspired by \courseName{} at Johns Hopkins University, taught by \profName{} \citep{asda2026}. Its treatment of likelihood, logistic regression, regularisation and model selection shaped the Academy's lessons and missions. The interface was also inspired by TensorFlow Playground \citep{smilkov2017playground}. Any errors are the author's own.

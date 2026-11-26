@@ -3,29 +3,29 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="theme-color" content="#ffffff">
+<meta name="theme-color" content="#f8f6f0">
 <title>Neural Network Lab · Train a neural network in your browser</title>
 <meta name="description" content="An interactive neural network playground: build a network, train it live with backpropagation, and see what every neuron learns. With guided challenges and step-by-step lessons.">
 <link rel="icon" href="img/logo.svg" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700&family=Barlow+Condensed:wght@500;600;700&family=Roboto+Mono:wght@400;500;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="css/style.css?v=202611240835">
-<script src="js/fx.js?v=202611240835"></script>
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;0,8..60,700;1,8..60,400;1,8..60,600&family=Inter:wght@500;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css?v=202611261442">
+<link rel="stylesheet" href="css/journal.css?v=202611261442">
+<script src="js/fx.js?v=202611261442"></script>
 </head>
 <body>
 <header class="nav"><div class="in">
-  <a class="brand" href="index.html"><img class="logo" src="img/logo.svg" alt=""><span class="full">NEURAL NETWORK LAB<small>MISSION CONTROL</small></span></a>
+  <a class="brand" href="index.html"><img class="logo" src="img/logo.svg" alt=""><span class="full">Neural Network Lab</span></a>
   <nav>
     <a href="index.html" class="on">Console</a>
-    <a href="#challenges">Missions</a>
+    <a href="#challenges" class="opt">Missions</a>
     <a href="learn.html">Academy</a>
+    <a href="advanced.html">Advanced</a>
     <a href="learn.html#quiz" class="opt">Exam</a>
     <a href="#report" class="opt">Report</a>
   </nav>
   <div class="sp"></div>
   <button class="iconbtn" id="share" title="Copy a link to this exact setup" aria-label="Copy link">⧉</button>
-  <span class="status"><i></i>SYSTEMS NOMINAL</span>
-  <button class="iconbtn" id="fxbtn" title="Toggle visual effects">FX ON</button>
 </div></header>
 
 
@@ -112,25 +112,39 @@
 
 <section class="hero" id="about">
   <div>
-    <div class="kicker">NEURAL NETWORK LAB — TRAINING CONSOLE</div>
-    <h1>Train a neural network</h1>
+    <div class="kicker">An interactive article</div>
+    <h1>Train a neural network, and watch it learn</h1>
     <p>Choose the data, design the architecture, launch training. Each circle is a neuron showing what it has learned. On every map <span style="color:var(--neg)">red</span> is one class and black the other. Each line is a weight: black for positive, <span style="color:var(--neg)">red</span> for negative.</p>
   </div>
   <div class="steps3">
     <a href="learn.html"><b>01 Academy</b>Neurons, loss, backprop</a>
     <a href="#challenges"><b>02 Missions</b>11 guided missions</a>
-    <a href="learn.html#quiz"><b>03 Exam</b>True / false quiz</a>
+    <a href="advanced.html"><b>03 Advanced</b>CNNs, RNNs, attention</a>
+    <a href="learn.html#quiz"><b>04 Exam</b>True / false quiz</a>
+  </div>
+</section>
+
+<section class="section" id="advanced">
+  <h2>Advanced: beyond the basic network</h2>
+  <p class="lead">Six further interactive modules on the ideas behind modern deep learning. Each one is computed live, and its maths is checked numerically.</p>
+  <div class="guide">
+    <div class="card advcard"><div class="lvl">Advanced 01</div><h4>Softmax &amp; temperature</h4><p>From one probability to a distribution over many classes, and what "temperature" does to it.</p><a class="btn sm" href="advanced.html#softmax">Open</a></div>
+    <div class="card advcard"><div class="lvl">Advanced 02</div><h4>Deep networks &amp; skip connections</h4><p>Watch gradients vanish or explode through 40 layers, then fix them with initialization and residual paths.</p><a class="btn sm" href="advanced.html#deep">Open</a></div>
+    <div class="card advcard"><div class="lvl">Advanced 03</div><h4>Dropout</h4><p>Two networks train side by side on noisy data, one with neurons randomly switched off.</p><a class="btn sm" href="advanced.html#dropout">Open</a></div>
+    <div class="card advcard"><div class="lvl">Advanced 04</div><h4>Convolution</h4><p>Draw an image, edit a 3 × 3 kernel, and see the feature map and pooling a CNN layer computes.</p><a class="btn sm" href="advanced.html#conv">Open</a></div>
+    <div class="card advcard"><div class="lvl">Advanced 05</div><h4>Recurrent memory</h4><p>How long a recurrent unit remembers a pulse, why the memory fades, and how gates keep it.</p><a class="btn sm" href="advanced.html#rnn">Open</a></div>
+    <div class="card advcard"><div class="lvl">Advanced 06</div><h4>Attention</h4><p>Click a word and see which other words it reads from, with and without a GPT-style causal mask.</p><a class="btn sm" href="advanced.html#attention">Open</a></div>
   </div>
 </section>
 
 <section class="section" id="report">
   <h2>Technical report</h2>
-  <p class="lead">A 16-page technical report covering the learning engine's equations, how the site is built, and a reproducible evaluation: a gradient check, benchmarks of every mission, model-capacity, overfitting and learning-rate experiments. Every number in it is produced by a script that runs this site's own code, and complete training runs are independently reproduced in JAX/Optax to machine precision (largest difference 7×10⁻¹⁵); with no hidden layer the network converges to the exact logistic-regression MLE and least-squares solution.</p>
+  <p class="lead">A 19-page technical report covering the learning engine's equations, how the site is built, and a reproducible evaluation: a gradient check, benchmarks of every mission, model-capacity, overfitting and learning-rate experiments. Every number in it is produced by a script that runs this site's own code, and complete training runs are independently reproduced in JAX/Optax to machine precision (largest difference 7×10⁻¹⁵); with no hidden layer the network converges to the exact logistic-regression MLE and least-squares solution.</p>
   <div class="reportbox">
     <div class="rmeta">
       <div class="rtitle">Neural Network Lab: an open, browser-based training console and interactive curriculum for seeing how neural networks learn</div>
       <div class="rauth">Sahil · Whiting School of Engineering, Johns Hopkins University · November 2026</div>
-      <div class="rfacts"><span>16 pages</span><span>9 tables</span><span>5 figures</span><span>24 references</span></div>
+      <div class="rfacts"><span>19 pages</span><span>11 tables</span><span>6 figures</span><span>31 references</span></div>
     </div>
     <div class="ractions">
       <a class="btn pri" href="report/neural-network-lab-technical-report.pdf" target="_blank" rel="noopener">Read the report (PDF)</a>
@@ -174,12 +188,11 @@
   <span><a href="report/neural-network-lab-technical-report.pdf">Technical report (PDF)</a></span>
 </div></footer>
 
-<div id="boot"><div class="term"><div class="logo-big">NEURAL NETWORK LAB</div><div class="lines"></div><div class="bar2"><i></i></div><div class="skip">Click to skip</div></div></div>
 <div id="fab"><button id="fabplay" aria-label="Play or pause training"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M7 4.5v15l13-7.5z"/></svg></button><div><b id="fabep">Epoch 0</b><span id="fabacc"></span></div></div>
 <div class="tooltip" id="tip"></div>
 <div class="wedit" id="wedit"><div style="margin-bottom:6px;color:var(--mut)" id="weditlbl">Weight</div><input id="weditin" type="number" step="0.1"> <button class="btn sm" id="weditok">Set</button></div>
 
-<script type="module" src="js/playground.js?v=202611240835"></script>
+<script type="module" src="js/playground.js?v=202611261442"></script>
 <script defer src="https://sahiljangra12.github.io/ask/ask.js" data-site="Neural Network Lab"></script>
 </body>
 </html>
