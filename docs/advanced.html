@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#f8f6f0">
+<title>Advanced · Neural Network Lab</title>
+<meta name="description" content="Interactive lessons on advanced neural networks: softmax and temperature, vanishing gradients and residual connections, dropout, convolution, recurrent memory and attention.">
+<link rel="icon" href="img/logo.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;0,8..60,700;1,8..60,400;1,8..60,600&family=Inter:wght@500;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css?v=202611261442">
+<link rel="stylesheet" href="css/journal.css?v=202611261442">
+<script src="js/fx.js?v=202611261442"></script>
+</head>
+<body>
+<header class="nav"><div class="in">
+  <a class="brand" href="index.html"><img class="logo" src="img/logo.svg" alt=""><span class="full">Neural Network Lab</span></a>
+  <nav>
+    <a href="index.html">Console</a>
+    <a href="index.html#challenges" class="opt">Missions</a>
+    <a href="learn.html">Academy</a>
+    <a href="advanced.html" class="on">Advanced</a>
+    <a href="learn.html#quiz" class="opt">Exam</a>
+    <a href="index.html#report" class="opt">Report</a>
+  </nav>
+  <div class="sp"></div>
+</div></header>
+
+<div class="learn">
+<aside class="toc" id="toc">
+  <b>Advanced modules</b>
+  <a href="#softmax">1 · Softmax &amp; temperature</a>
+  <a href="#deep">2 · Deep networks &amp; skip connections</a>
+  <a href="#dropout">3 · Dropout</a>
+  <a href="#conv">4 · Convolution</a>
+  <a href="#rnn">5 · Recurrent memory</a>
+  <a href="#attention">6 · Attention</a>
+  <a href="#map">From here to modern AI</a>
+  <a href="#advquiz">Check yourself</a>
+  <div class="prog"><i id="prog"></i></div>
+</aside>
+
+<main>
+<div class="academyintro"><div class="num">Advanced</div><p>Six interactive modules on the ideas that turn the small network in the Console into modern deep learning. Every figure is computed live in your browser, and the maths behind each one is checked numerically (see the technical report).</p></div>
+
+<!-- 1 SOFTMAX -->
+<section class="lesson" id="softmax">
+  <div class="num">Advanced 01</div>
+  <h2>Softmax: from two classes to many</h2>
+  <p class="lead">A sigmoid gives one probability. Softmax gives a whole distribution over any number of classes.</p>
+  <p>The Console's output neuron answers a yes/no question. For K classes, the network produces K scores called <b>logits</b>, and softmax turns them into probabilities that are positive and sum to one. Training minimises the <b>cross-entropy</b> −log p<sub>true</sub>, the negative log-likelihood of a multinomial model, so this is <b>multinomial logistic regression</b> on the last hidden layer.</p>
+  <div class="formula" style="max-width:600px">p_k = exp(z_k / T) / Σ_j exp(z_j / T)        ∂L/∂z_k = p_k − y_k</div>
+  <div class="widget">
+    <div class="wgrid">
+      <div>
+        <div class="sl"><span>logit A</span><input type="range" id="sm0" min="-4" max="4" step="0.1" value="2"><span class="val" id="sm0v"></span></div>
+        <div class="sl"><span>logit B</span><input type="range" id="sm1" min="-4" max="4" step="0.1" value="1"><span class="val" id="sm1v"></span></div>
+        <div class="sl"><span>logit C</span><input type="range" id="sm2" min="-4" max="4" step="0.1" value="0"><span class="val" id="sm2v"></span></div>
+        <div class="sl"><span>logit D</span><input type="range" id="sm3" min="-4" max="4" step="0.1" value="-1"><span class="val" id="sm3v"></span></div>
+        <div class="sl" style="margin-top:14px"><span>temp. T</span><input type="range" id="smT" min="-1" max="1" step="0.02" value="0"><span class="val" id="smTv"></span></div>
+        <div class="pills" id="smtrue" style="margin-top:12px"></div>
+        <div class="formula" id="smout" style="white-space:pre-wrap"></div>
+      </div>
+      <div><canvas class="plot" id="smcv" style="aspect-ratio:4/3"></canvas>
+        <div class="legend"><span><i style="background:var(--fg)"></i>probability p</span><span><i style="background:var(--neg)"></i>gradient p − y (pushes the logit down when positive)</span></div></div>
+    </div>
+  </div>
+  <p>Lower the <b>temperature</b> and the distribution sharpens toward the largest logit (T → 0 is arg-max). Raise it and the distribution flattens toward uniform. This is the same "temperature" setting used when a language model picks its next word.</p>
+  <div class="callout"><b>Connection to statistics</b>With K = 2, softmax reduces exactly to the sigmoid: p = 1 / (1 + e<sup>−(z₁ − z₂)</sup>). The gradient p − y is the same "prediction minus target" as in logistic regression and least squares.</div>
+</section>
+
+<!-- 2 DEEP -->
+<section class="lesson" id="deep">
+  <div class="num">Advanced 02</div>
+  <h2>Going deep: vanishing gradients, initialization and skip connections</h2>
+  <p class="lead">Backpropagation multiplies one factor per layer. Thirty factors a little below one give almost nothing; a little above one, an explosion.</p>
+  <p>The figure builds a network of the depth you choose (32 neurons per layer), sends random inputs forward and a random error backward, and plots the size of the <b>signal</b> and of the <b>gradient</b> at every layer on a log scale. A healthy network keeps both lines roughly flat.</p>
+  <div class="widget">
+    <div style="display:flex;flex-wrap:wrap;gap:8px 18px;align-items:flex-start">
+      <div><div class="sub">Activation</div><div class="pills" id="dpact"></div></div>
+      <div><div class="sub">Weight initialization (variance)</div><div class="pills" id="dpinit"></div></div>
+      <div><div class="sub">Architecture</div><div class="pills" id="dpres"></div></div>
+    </div>
+    <div class="sl" style="max-width:520px"><span>depth</span><input type="range" id="dpdepth" min="2" max="40" step="1" value="20"><span class="val" id="dpdepthv"></span></div>
+    <canvas class="plot" id="dpcv" style="height:300px"></canvas>
+    <div class="legend"><span><i style="background:var(--fg)"></i>signal: RMS activation, input → output</span><span><i style="background:var(--neg)"></i>gradient: RMS of ∂L/∂a, output → input</span></div>
+    <div class="probe" id="dpnote"></div>
+    <div style="margin-top:8px"><button class="btn sm" id="dpseed">New random weights</button></div>
+  </div>
+  <ul>
+    <li><b>Sigmoid</b>'s slope is at most 0.25, so its gradient shrinks at every layer whatever the initialization. This is the vanishing gradient.</li>
+    <li><b>Xavier</b> initialization (variance 1/n) keeps tanh networks stable; <b>He</b> initialization (2/n) does the same for ReLU, which zeroes half its inputs.</li>
+    <li><b>Skip connections</b> (a<sub>l</sub> = a<sub>l−1</sub> + f(W a<sub>l−1</sub>)) add an identity path, so the gradient always has a route back that is not multiplied by small numbers. This idea, from ResNet, is what made networks with hundreds of layers trainable.</li>
+  </ul>
+</section>
+
+<!-- 3 DROPOUT -->
+<section class="lesson" id="dropout">
+  <div class="num">Advanced 03</div>
+  <h2>Dropout: training a different network every step</h2>
+  <p class="lead">Randomly switching neurons off during training stops any one of them from memorising the data.</p>
+  <p>At every training step each hidden neuron is kept with probability 1 − p and otherwise set to zero; the kept ones are scaled by 1/(1 − p) so the expected signal is unchanged. At test time all neurons are used. The effect is like averaging a large ensemble of thinned networks, and it lowers variance much as ridge does. Two identical networks (two hidden layers of 16 tanh neurons) train below on the same 40 noisy points.</p>
+  <div class="widget">
+    <div class="sl" style="grid-template-columns:150px 1fr 60px;max-width:560px"><span>dropout rate p</span><input type="range" id="drp" min="0.1" max="0.7" step="0.05" value="0.4"><span class="val" id="drpv"></span></div>
+    <div class="wgrid" style="margin-top:10px">
+      <div><div class="sub" style="margin-bottom:4px"><b>No dropout</b></div><canvas class="plot" id="dra" style="aspect-ratio:1"></canvas><div class="probe" id="dras"></div></div>
+      <div><div class="sub" style="margin-bottom:4px"><b>With dropout</b></div><canvas class="plot" id="drb" style="aspect-ratio:1"></canvas><div class="probe" id="drbs"></div></div>
+    </div>
+    <canvas class="plot" id="drloss" style="height:140px;margin-top:10px"></canvas>
+    <div class="legend"><span><i style="background:var(--neg)"></i>No dropout · test</span><span><i style="background:var(--neg);opacity:.4"></i>No dropout · train</span><span><i style="background:var(--fg)"></i>Dropout · test</span><span><i style="background:var(--fg);opacity:.4"></i>Dropout · train</span></div>
+    <div style="display:flex;gap:8px;margin-top:10px"><button class="btn pri" id="drgo">▶ Train</button><button class="btn" id="drreset">New data &amp; reset</button></div>
+  </div>
+  <div class="callout exam"><b>Common trap</b>"Dropout is also applied when making predictions." <b>False.</b> It is a training-time device. At test time every neuron is active; the 1/(1 − p) scaling during training is what keeps the two consistent.</div>
+</section>
+
+<!-- 4 CONV -->
+<section class="lesson" id="conv">
+  <div class="num">Advanced 04</div>
+  <h2>Convolution: one small detector, slid everywhere</h2>
+  <p class="lead">Images have structure a fully connected layer ignores: nearby pixels belong together, and a cat is a cat wherever it sits.</p>
+  <p>A convolutional layer slides one small <b>kernel</b> of weights across the image and records how strongly each patch matches it, giving a <b>feature map</b>. The same nine weights are reused at every position (weight sharing). A ReLU keeps the positive matches, and <b>max-pooling</b> keeps the strongest response in each 2 × 2 block. <b>Draw on the input</b>, pick or edit a kernel, and hover the feature map to see the patch each value came from.</p>
+  <div class="widget">
+    <div style="display:flex;flex-wrap:wrap;gap:8px 18px">
+      <div><div class="sub">Input image</div><div class="pills" id="cvimg"></div></div>
+      <div><div class="sub">Kernel</div><div class="pills" id="cvker"></div></div>
+    </div>
+    <div class="convrow">
+      <div><div class="sub"><b>Input</b> 12 × 12 (click or drag to draw)</div><canvas class="plot" id="cvin" style="aspect-ratio:1;cursor:crosshair;touch-action:none"></canvas></div>
+      <div class="kerbox"><div class="sub"><b>Kernel</b> 3 × 3 (editable)</div><div id="cvkgrid" class="kgrid"></div><div class="probe" id="cvcalc"></div></div>
+      <div><div class="sub"><b>Feature map</b> 10 × 10, after ReLU</div><canvas class="plot" id="cvout" style="aspect-ratio:1"></canvas></div>
+      <div><div class="sub"><b>Max-pooled</b> 5 × 5</div><canvas class="plot" id="cvpool" style="aspect-ratio:1"></canvas></div>
+    </div>
+    <div class="probe" id="cvnote"></div>
+  </div>
+  <p>A dense layer from this 12 × 12 image to a 10 × 10 output would need 144 × 100 = 14,400 weights. The convolution needs <b>9</b>. Fewer parameters means lower variance, and the same detector working at every position builds in the knowledge that location should not matter. A CNN stacks many such layers: early kernels find edges, later ones combine them into textures, parts and objects.</p>
+</section>
+
+<!-- 5 RNN -->
+<section class="lesson" id="rnn">
+  <div class="num">Advanced 05</div>
+  <h2>Recurrent networks: memory, and why it fades</h2>
+  <p class="lead">For sequences, a recurrent network keeps a hidden state and updates it at every step with the same weights.</p>
+  <p>The simplest recurrent unit is h<sub>t</sub> = tanh(w·h<sub>t−1</sub> + u·x<sub>t</sub>). Below, the input is a single pulse at the first step and nothing afterwards, so the black curve shows how long the unit <b>remembers</b> it. The red curve is the <b>influence</b> ∂h<sub>T</sub>/∂h<sub>t</sub>: how much the final state would change if the state at step t changed. Backpropagation through time multiplies one factor w·(1 − h²) per step, so this is the vanishing-gradient problem again, along time instead of depth.</p>
+  <div class="widget">
+    <div class="wgrid">
+      <div>
+        <div class="sl" style="grid-template-columns:120px 1fr 56px"><span>recurrent w</span><input type="range" id="rnw" min="0" max="2.5" step="0.02" value="0.8"><span class="val" id="rnwv"></span></div>
+        <div class="sl" style="grid-template-columns:120px 1fr 56px"><span>input u</span><input type="range" id="rnu" min="0.2" max="3" step="0.05" value="1.5"><span class="val" id="rnuv"></span></div>
+        <div class="sl" style="grid-template-columns:120px 1fr 56px"><span>gate g</span><input type="range" id="rng" min="0.02" max="1" step="0.01" value="1"><span class="val" id="rngv"></span></div>
+        <div class="sl" style="grid-template-columns:120px 1fr 56px"><span>steps T</span><input type="range" id="rnT" min="5" max="60" step="1" value="30"><span class="val" id="rnTv"></span></div>
+        <div class="formula" id="rnout" style="white-space:pre-wrap;margin-top:10px"></div>
+      </div>
+      <div><canvas class="plot" id="rncv" style="aspect-ratio:4/3"></canvas>
+        <div class="legend"><span><i style="background:var(--fg)"></i>hidden state h<sub>t</sub></span><span><i style="background:var(--neg)"></i>influence ∂h<sub>T</sub>/∂h<sub>t</sub> (log scale, right)</span></div></div>
+    </div>
+  </div>
+  <ul>
+    <li>With <b>w &lt; 1</b> the memory decays and the influence of early steps vanishes: the unit cannot learn long-range patterns.</li>
+    <li>With <b>w &gt; 1</b> the state latches near ±1, where tanh is flat, so the gradient still vanishes; in a network without the squashing it would explode.</li>
+    <li>Lower the <b>gate g</b>: the update becomes h<sub>t</sub> = (1 − g)·h<sub>t−1</sub> + g·(new value), so most of the old state is carried forward unchanged and the influence stays near (1 − g)<sup>T</sup> instead of collapsing. Learned gates of this kind are the idea behind <b>LSTM</b> and <b>GRU</b> units.</li>
+  </ul>
+</section>
+
+<!-- 6 ATTENTION -->
+<section class="lesson" id="attention">
+  <div class="num">Advanced 06</div>
+  <h2>Attention: letting every word look at every other word</h2>
+  <p class="lead">Instead of squeezing a sentence through one fading memory, attention lets each position read directly from all the others.</p>
+  <p>Each word is a vector. To update a word, <b>scaled dot-product attention</b> scores it against every word (a dot product, large when two vectors point the same way), turns the scores into weights with a softmax, and takes the weighted average of the other vectors. <b>Click a word</b> to make it the query.</p>
+  <div class="formula" style="max-width:600px">weights_i = softmax( β · e_i · e_j / √d )        output_i = Σ_j weights_ij · e_j</div>
+  <div class="widget">
+    <div class="pills" id="atmode"></div>
+    <div class="sl" style="grid-template-columns:120px 1fr 56px;max-width:520px"><span>sharpness β</span><input type="range" id="atbeta" min="0" max="12" step="0.2" value="6"><span class="val" id="atbetav"></span></div>
+    <canvas class="plot" id="atcv" style="height:250px;cursor:pointer"></canvas>
+    <div class="wgrid" style="margin-top:12px">
+      <div><div class="sub"><b>Attention matrix</b> (row = query, column = word attended to)</div><canvas class="plot" id="atmat" style="aspect-ratio:1;max-width:380px;cursor:pointer"></canvas></div>
+      <div><div class="probe" id="atnote" style="white-space:pre-wrap"></div>
+        <p class="sub" style="margin-top:10px">The word vectors here are a <b>hand-made toy</b> with four features (living thing, place or object, action, grammar word), chosen so related words point the same way. A real transformer <i>learns</i> its vectors, and learns separate query, key and value projections for many attention "heads".</p></div>
+    </div>
+  </div>
+  <p>Look at "it": apart from itself, its strongest links are to "cat" and "tired", which is how a model can work out what a pronoun refers to. Switch on the <b>causal mask</b> and each word can only look backwards. That is the rule in GPT-style models, which predict the next word from the words so far. Because no step depends on a long chain of earlier steps, the gradient path between any two words has length one, which removes the fading-memory problem of the previous module.</p>
+</section>
+
+<!-- MAP -->
+<section class="lesson" id="map">
+  <div class="num">Overview</div>
+  <h2>From this lab to modern AI</h2>
+  <p>Every architecture below is trained the way the Console trains its small network: a forward pass, a loss, backpropagation, and gradient descent. What changes is the structure built into the layers.</p>
+  <table class="gl">
+    <tr><td>Multilayer perceptron</td><td>Fully connected layers. No assumptions about the input. The Console's network. Good for tabular data.</td></tr>
+    <tr><td>Convolutional network (CNN)</td><td>Shared local detectors plus pooling. Assumes nearby inputs matter together and position should not. Images, audio, grids.</td></tr>
+    <tr><td>Recurrent network (RNN, LSTM, GRU)</td><td>One cell reused at every time step with a carried state. Assumes order matters. Sequences; long memory needs gates.</td></tr>
+    <tr><td>Residual network (ResNet)</td><td>Skip connections around blocks so gradients survive hundreds of layers. Used inside almost every modern model.</td></tr>
+    <tr><td>Transformer</td><td>Stacks of attention and small perceptrons, with skip connections and normalization. Every position reads every other directly. Language models, and increasingly images and science.</td></tr>
+    <tr><td>Regularizers</td><td>L2 weight decay, dropout, early stopping, data augmentation. All trade a little bias for less variance.</td></tr>
+  </table>
+</section>
+
+<!-- QUIZ -->
+<section class="lesson quiz" id="advquiz">
+  <div class="num">Check yourself</div>
+  <h2>True or false?</h2>
+  <div class="score" id="score"></div>
+  <div id="quizlist"></div>
+  <button class="btn" id="quizreset">Reset quiz</button>
+</section>
+</main>
+</div>
+
+<footer class="site"><div class="in">
+  <span>Neural Network Lab · built by Sahil · open source on <a href="https://github.com/sahiljangra12/neural-network-lab">GitHub</a></span>
+  <span>Inspired by EN.553.413/613 Applied Statistics and Data Analysis, Prof. Suryanarayana Maddu, JHU</span>
+  <span><a href="report/neural-network-lab-technical-report.pdf">Technical report (PDF)</a> · <a href="index.html">Back to the console</a></span>
+</div></footer>
+
+<script type="module" src="js/advanced.js?v=202611261442"></script>
+<script defer src="https://sahiljangra12.github.io/ask/ask.js" data-site="Neural Network Lab"></script>
+</body>
+</html>
