@@ -1,15 +1,15 @@
 // Guided missions: each loads a configuration and a question.
 export const CH = [
   { lvl: 1, title: 'Hello, neuron', desc: 'Two blobs, zero hidden layers. A single output neuron is all you need.', cfg: { dataset: 'gauss', layers: [], features: ['x1', 'x2'], lr: 0.03 },
-    mission: 'A network with <b>no hidden layers</b> is exactly logistic regression: P(black) = σ(w₁X₁ + w₂X₂ + b). Press play and watch the boundary settle as a straight line. <b>Question:</b> what happens to the weights if you raise the noise?' },
-  { lvl: 1, title: 'Why a straight line fails', desc: 'Same tiny model, but now the black points sit inside a ring of red.', cfg: { dataset: 'circle', layers: [], features: ['x1', 'x2'], lr: 0.03 },
+    mission: 'A network with <b>no hidden layers</b> is exactly logistic regression: P(class +1) = σ(w₁X₁ + w₂X₂ + b). Press play and watch the boundary settle as a straight line. <b>Question:</b> what happens to the weights if you raise the noise?' },
+  { lvl: 1, title: 'Why a straight line fails', desc: 'Same tiny model, but now one class sits inside a ring of the other.', cfg: { dataset: 'circle', layers: [], features: ['x1', 'x2'], lr: 0.03 },
     mission: 'The model can only draw <b>one straight line</b>, so it gets stuck around 50–60% accuracy no matter how long it trains. Watch the Live insight panel. <b>Goal:</b> fix it in the next two challenges in two very different ways.' },
   { lvl: 2, title: 'Fix it with features', desc: 'No hidden layer, but give the model X₁² and X₂².', cfg: { dataset: 'circle', layers: [], features: ['x1sq', 'x2sq'], lr: 0.03 },
     mission: 'X₁² + X₂² is the squared distance from the centre, so a linear boundary in these features is a <b>circle</b> in the original plane. This is <b>basis expansion</b>, the same trick as adding x² to a regression. It is still a linear model, just in richer features.' },
   { lvl: 2, title: 'Fix it with a hidden layer', desc: 'Back to raw X₁, X₂, now with 4 tanh neurons.', cfg: { dataset: 'circle', layers: [4], features: ['x1', 'x2'], act: 'tanh', lr: 0.03 },
     mission: 'Each hidden neuron draws one line. The output neuron combines them into a closed shape. <b>Hover each hidden neuron</b> to see its line. <b>Try:</b> remove neurons one at a time. What is the smallest number that still works?' },
   { lvl: 2, title: 'The XOR problem', desc: 'The classic example a single neuron cannot solve, famous since 1969.', cfg: { dataset: 'xor', layers: [4], features: ['x1', 'x2'], act: 'tanh', lr: 0.03 },
-    mission: 'Black where X₁ and X₂ have the same sign, red where they differ. No single line separates them. A hidden layer learns it. <b>Bonus:</b> switch the hidden layer off (−) and turn on the X₁X₂ feature instead. One feature solves it.' },
+    mission: 'One class where X₁ and X₂ have the same sign, the other where they differ. No single line separates them. A hidden layer learns it. <b>Bonus:</b> switch the hidden layer off (−) and turn on the X₁X₂ feature instead. One feature solves it.' },
   { lvl: 3, title: 'Linear activation trap', desc: 'Three hidden layers of 8 neurons, all with a linear activation. Surely that is enough?', cfg: { dataset: 'circle', layers: [8, 8, 8], features: ['x1', 'x2'], act: 'linear', lr: 0.01 },
     mission: 'It isn\'t. W₃(W₂(W₁x)) = (W₃W₂W₁)x, so <b>stacked linear layers collapse into one linear map</b> and the boundary stays straight. The nonlinearity, not the depth, gives a network its power. Switch the activation to tanh and watch it solve the problem.' },
   { lvl: 3, title: 'Learning rate too high', desc: 'Same easy problem, with a learning rate of 3.', cfg: { dataset: 'circle', layers: [4, 2], features: ['x1', 'x2'], act: 'tanh', lr: 3 },

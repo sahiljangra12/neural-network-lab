@@ -1,6 +1,6 @@
 // Pure maths for the Advanced section. No DOM, so tools/check_advanced.mjs can verify it.
-import { Network, ACTIVATIONS } from './nn.js?v=202611261907';
-import { rng, normalFrom } from './data.js?v=202611261907';
+import { Network, ACTIVATIONS } from './nn.js?v=202611261914';
+import { rng, normalFrom } from './data.js?v=202611261914';
 
 /* ---------- softmax ---------- */
 export function softmax(logits, T = 1) {

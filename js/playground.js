@@ -1,7 +1,7 @@
-import { CLASS_DATASETS, REG_DATASETS, FEATURES, makeData } from './data.js?v=202611261907';
-import { Network, ACTIVATIONS } from './nn.js?v=202611261907';
-import { colormap, rebuildColormap } from './colors.js?v=202611261907';
-import { CH } from './missions.js?v=202611261907';
+import { CLASS_DATASETS, REG_DATASETS, FEATURES, makeData } from './data.js?v=202611261914';
+import { Network, ACTIVATIONS } from './nn.js?v=202611261914';
+import { colormap, rebuildColormap, ink, paper, posName } from './colors.js?v=202611261914';
+import { CH } from './missions.js?v=202611261914';
 
 const $ = id => document.getElementById(id);
 const LRS = [0.00001, 0.0001, 0.001, 0.003, 0.01, 0.03, 0.1, 0.3, 1, 3, 10];
@@ -148,7 +148,7 @@ function drawOutput() {
       const c = colormap(S.problem === 'class' ? p.label : p.label);
       ctx.beginPath(); ctx.arc(P(p.x), Q(p.y), r, 0, 7);
       ctx.fillStyle = `rgb(${c[0]},${c[1]},${c[2]})`; ctx.fill();
-      ctx.lineWidth = (isTest ? 1.8 : 1) * dpr; ctx.strokeStyle = isTest ? '#8c8c8c' : '#ffffff'; ctx.stroke();
+      ctx.lineWidth = (isTest ? 1.8 : 1) * dpr; ctx.strokeStyle = isTest ? '#8c8c8c' : paper(); ctx.stroke();
     }
   };
   if (!hover) { drawPts(train, false); if (S.showTest) drawPts(test, true); }
@@ -172,7 +172,7 @@ function drawLossChart() {
   ctx.font = '500 11.5px "JetBrains Mono", monospace'; ctx.lineWidth = 1;
   for (let k = 0; k <= 4; k++) {
     const v = max * k / 4, y = Math.round(T + ph - v / max * ph) + .5;
-    ctx.strokeStyle = k ? 'rgba(0,0,0,.13)' : cv('--line2'); ctx.beginPath(); ctx.moveTo(L, y); ctx.lineTo(L + pw, y); ctx.stroke();
+    ctx.strokeStyle = k ? ink(.13) : cv('--line2'); ctx.beginPath(); ctx.moveTo(L, y); ctx.lineTo(L + pw, y); ctx.stroke();
     ctx.fillStyle = cv('--faint'); ctx.textAlign = 'right'; ctx.fillText(v.toFixed(max < 0.5 ? 2 : 1), L - 6, y + 3.5);
   }
   ctx.textAlign = 'left'; ctx.fillText('0', L, h - 5);
@@ -307,7 +307,7 @@ netEl.addEventListener('mousemove', e => {
     if (l === 0) { const f = FEATURES[j]; showTip(e, `<b>${f.label}</b>: ${f.help}<br>${S.features.includes(f.id) ? 'On' : 'Off'}. Click to switch ${S.features.includes(f.id) ? 'off' : 'on'}.`); }
     else {
       const L = net.sizes.length - 1;
-      showTip(e, `<b>${l === L ? 'Output neuron' : `Layer ${l}, neuron ${j + 1}`}</b><br><span class="mono">bias b = ${net.b[l - 1][j].toFixed(3)}</span><br>${l === L ? (S.problem === 'class' ? 'σ(w·h + b) = P(black). This is logistic regression on the last layer.' : 'Linear output w·h + b') : `${ACTIVATIONS[S.act].name}(w·inputs + b)`}`);
+      showTip(e, `<b>${l === L ? 'Output neuron' : `Layer ${l}, neuron ${j + 1}`}</b><br><span class="mono">bias b = ${net.b[l - 1][j].toFixed(3)}</span><br>${l === L ? (S.problem === 'class' ? 'σ(w·h + b) = P(${posName()}). This is logistic regression on the last layer.' : 'Linear output w·h + b') : `${ACTIVATIONS[S.act].name}(w·inputs + b)`}`);
     }
   } else if (p) {
     hover = null;
@@ -340,7 +340,7 @@ function probe(e) {
   const x = -6 + (e.clientX - r.left) / r.width * 12, y = 6 - (e.clientY - r.top) / r.height * 12;
   const p = net.forward(activeFeatures().map(f => f.f(x, y)));
   $('probe').innerHTML = S.problem === 'class'
-    ? `X₁ = ${x.toFixed(2)}, X₂ = ${y.toFixed(2)} → P(black) = <b>${p.toFixed(3)}</b>, predicts <b style="color:var(${p >= .5 ? '--fg' : '--neg'})">${p >= .5 ? 'black' : 'red'}</b>`
+    ? `X₁ = ${x.toFixed(2)}, X₂ = ${y.toFixed(2)} → P(${posName()}) = <b>${p.toFixed(3)}</b>, predicts <b style="color:var(${p >= .5 ? '--fg' : '--neg'})">${p >= .5 ? posName() : 'red'}</b>`
     : `X₁ = ${x.toFixed(2)}, X₂ = ${y.toFixed(2)} → ŷ = <b>${p.toFixed(3)}</b>`;
 }
 out.addEventListener('pointermove', probe);
@@ -396,7 +396,7 @@ function render(full) {
     $('acclbl').textContent = 'Zero wts'; $('testacc').textContent = net.weightCount(); $('acclbl2').textContent = 'Params';
   }
   $('lossname').textContent = S.problem === 'class' ? 'log loss' : '½ squared error';
-  $('sclo').textContent = S.problem === 'class' ? 'red' : '−1'; $('schi').textContent = S.problem === 'class' ? 'black' : '1';
+  $('sclo').textContent = S.problem === 'class' ? 'red' : '−1'; $('schi').textContent = S.problem === 'class' ? posName() : '1';
   $('scmid').textContent = S.problem === 'class' ? 'P = 0.5' : '0';
   insight();
   frameN++;

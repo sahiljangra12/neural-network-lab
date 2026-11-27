@@ -1,6 +1,6 @@
-import { softmax, crossEntropy, softmaxGrad, deepProfile, DropNet, conv2d, relu, maxPool, rnnRun, attention } from './advmath.js?v=202611261907';
-import { makeData } from './data.js?v=202611261907';
-import { colormap, rebuildColormap } from './colors.js?v=202611261907';
+import { softmax, crossEntropy, softmaxGrad, deepProfile, DropNet, conv2d, relu, maxPool, rnnRun, attention } from './advmath.js?v=202611261914';
+import { makeData } from './data.js?v=202611261914';
+import { colormap, rebuildColormap, ink, paper, shadeRGB } from './colors.js?v=202611261914';
 
 const $ = id => document.getElementById(id);
 const cssv = n => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
@@ -101,7 +101,7 @@ function drawDrop() {
   [['dra', dr.a, 'dras'], ['drb', dr.b, 'drbs']].forEach(([id, net, st]) => {
     const { ctx, W, H } = setup($(id));
     heat(ctx, W, H, (x, y) => 2 * net.forward([x, y]) - 1);
-    for (const p of dr.train) { const c = colormap(p.label); ctx.beginPath(); ctx.arc((p.x + 6) / 12 * W, (6 - p.y) / 12 * H, 4, 0, 7); ctx.fillStyle = `rgb(${c})`; ctx.fill(); ctx.strokeStyle = '#fff'; ctx.lineWidth = 1.2; ctx.stroke(); }
+    for (const p of dr.train) { const c = colormap(p.label); ctx.beginPath(); ctx.arc((p.x + 6) / 12 * W, (6 - p.y) / 12 * H, 4, 0, 7); ctx.fillStyle = `rgb(${c})`; ctx.fill(); ctx.strokeStyle = paper(); ctx.lineWidth = 1.2; ctx.stroke(); }
     $(st).innerHTML = `epoch ${dr.ep} · train ${net.loss(dr.train).toFixed(3)} · <b>test ${net.loss(dr.test).toFixed(3)}</b> · test acc ${(net.accuracy(dr.test) * 100).toFixed(0)}%`;
   });
   const { ctx, W, H } = setup($('drloss')), all = [...dr.h.at, ...dr.h.aT, ...dr.h.bt, ...dr.h.bT].filter(isFinite), max = Math.max(0.4, ...all) * 1.05, n = Math.max(20, dr.h.at.length);
@@ -137,11 +137,11 @@ $('cvkgrid').addEventListener('input', e => { const v = parseFloat(e.target.valu
 function grid(ctx, W, n, val, shade, numbers) {
   const s = W / n;
   for (let r = 0; r < n; r++) for (let c = 0; c < n; c++) {
-    const g = Math.round(255 - 249 * clamp(shade(val[r * n + c]), 0, 1));
-    ctx.fillStyle = `rgb(${g},${g},${g})`; ctx.fillRect(c * s, r * s, s, s);
-    if (numbers) { ctx.fillStyle = g < 130 ? '#fff' : '#000'; ctx.textAlign = 'center'; ctx.font = `600 ${Math.min(13, s * 0.36)}px ${SANS}`; ctx.fillText(val[r * n + c].toFixed(1), c * s + s / 2, r * s + s / 2 + 4); }
+    const sv = clamp(shade(val[r * n + c]), 0, 1), g = sv > 0.5 ? 0 : 255;
+    ctx.fillStyle = `rgb(${shadeRGB(sv)})`; ctx.fillRect(c * s, r * s, s, s);
+    if (numbers) { ctx.fillStyle = g < 130 ? paper() : ink(); ctx.textAlign = 'center'; ctx.font = `600 ${Math.min(13, s * 0.36)}px ${SANS}`; ctx.fillText(val[r * n + c].toFixed(1), c * s + s / 2, r * s + s / 2 + 4); }
   }
-  ctx.strokeStyle = 'rgba(0,0,0,.18)'; ctx.lineWidth = 1; ctx.beginPath();
+  ctx.strokeStyle = ink(.18); ctx.lineWidth = 1; ctx.beginPath();
   for (let i = 1; i < n; i++) { ctx.moveTo(i * s, 0); ctx.lineTo(i * s, W); ctx.moveTo(0, i * s); ctx.lineTo(W, i * s); } ctx.stroke();
   return s;
 }
@@ -195,14 +195,14 @@ function drawAtt() {
   const beta = +$('atbeta').value; $('atbetav').textContent = beta.toFixed(1);
   const { weights } = attention(EMB, beta, atCausal), w = weights[atQ], n = TOK.length;
   const { ctx, W, H } = setup($('atcv')), cw = W / n, fs = clamp(cw / 4.6, 9.5, 16), yT = 34, yB = H - 52;
-  const box = (i, y, on, shade) => { const x = i * cw + 3, bw = cw - 6; ctx.fillStyle = on ? cssv('--neg') : `rgba(0,0,0,${0.04 + 0.85 * shade})`; ctx.fillRect(x, y - 17, bw, 28); ctx.strokeStyle = cssv('--fg'); ctx.lineWidth = 1; ctx.strokeRect(x + .5, y - 16.5, bw - 1, 27); ctx.fillStyle = on || shade > 0.45 ? '#fff' : cssv('--fg'); ctx.textAlign = 'center'; ctx.font = `700 ${fs}px ${SANS}`; ctx.fillText(TOK[i], x + bw / 2, y + 2); };
+  const box = (i, y, on, shade) => { const x = i * cw + 3, bw = cw - 6; ctx.fillStyle = on ? cssv('--neg') : ink(0.04 + 0.85 * shade); ctx.fillRect(x, y - 17, bw, 28); ctx.strokeStyle = cssv('--fg'); ctx.lineWidth = 1; ctx.strokeRect(x + .5, y - 16.5, bw - 1, 27); ctx.fillStyle = on || shade > 0.45 ? paper() : cssv('--fg'); ctx.textAlign = 'center'; ctx.font = `700 ${fs}px ${SANS}`; ctx.fillText(TOK[i], x + bw / 2, y + 2); };
   ctx.lineCap = 'round';
-  w.forEach((v, j) => { if (v < 0.004) return; ctx.strokeStyle = `rgba(0,0,0,${0.15 + 0.85 * v})`; ctx.lineWidth = 1 + 13 * v; ctx.beginPath(); ctx.moveTo(atQ * cw + cw / 2, yT + 13); ctx.lineTo(j * cw + cw / 2, yB - 19); ctx.stroke(); });
+  w.forEach((v, j) => { if (v < 0.004) return; ctx.strokeStyle = ink(0.15 + 0.85 * v); ctx.lineWidth = 1 + 13 * v; ctx.beginPath(); ctx.moveTo(atQ * cw + cw / 2, yT + 13); ctx.lineTo(j * cw + cw / 2, yB - 19); ctx.stroke(); });
   TOK.forEach((_, i) => { box(i, yT, i === atQ, 0); box(i, yB, false, w[i]); ctx.fillStyle = cssv('--fg'); ctx.font = `600 ${clamp(fs - 1, 9.5, 13)}px ${SANS}`; ctx.fillText((w[i] * 100).toFixed(0) + '%', i * cw + cw / 2, yB + 30); });
   ctx.fillStyle = cssv('--mut'); ctx.textAlign = 'left'; ctx.font = `600 11.5px ${SANS}`; ctx.fillText('query (click a word)', 4, 11); ctx.fillText('attention paid to each word', 4, H - 4);
   const m = setup($('atmat')), s = m.W / n;
-  weights.forEach((row, i) => row.forEach((v, j) => { const g = Math.round(255 - 249 * v); m.ctx.fillStyle = `rgb(${g},${g},${g})`; m.ctx.fillRect(j * s, i * s, s, s); }));
-  m.ctx.strokeStyle = 'rgba(0,0,0,.15)'; m.ctx.lineWidth = 1; m.ctx.beginPath(); for (let i = 1; i < n; i++) { m.ctx.moveTo(i * s, 0); m.ctx.lineTo(i * s, m.W); m.ctx.moveTo(0, i * s); m.ctx.lineTo(m.W, i * s); } m.ctx.stroke();
+  weights.forEach((row, i) => row.forEach((v, j) => { m.ctx.fillStyle = `rgb(${shadeRGB(v)})`; m.ctx.fillRect(j * s, i * s, s, s); }));
+  m.ctx.strokeStyle = ink(.15); m.ctx.lineWidth = 1; m.ctx.beginPath(); for (let i = 1; i < n; i++) { m.ctx.moveTo(i * s, 0); m.ctx.lineTo(i * s, m.W); m.ctx.moveTo(0, i * s); m.ctx.lineTo(m.W, i * s); } m.ctx.stroke();
   m.ctx.strokeStyle = cssv('--neg'); m.ctx.lineWidth = 3; m.ctx.strokeRect(1.5, atQ * s + 1.5, m.W - 3, s - 3);
   const top = w.map((v, j) => [v, j]).sort((a, b) => b[0] - a[0]).slice(0, 3);
   $('atnote').innerHTML = `Query: <b>"${TOK[atQ]}"</b> (word ${atQ + 1})\nIt attends most to: ${top.map(([v, j]) => `<b>${TOK[j]}</b> ${(v * 100).toFixed(0)}%`).join(', ')}\n${atCausal ? 'Causal mask on: words to the right get exactly 0%.' : 'Every word can see the whole sentence.'}${beta === 0 ? '\nβ = 0: all words weighted equally (a plain average).' : ''}`;
@@ -243,6 +243,7 @@ function onScroll() {
 }
 window.addEventListener('scroll', onScroll, { passive: true });
 function drawAll() { drawSoftmax(); drawDeep(); drawDrop(); drawConv(); drawRnn(); drawAtt(); }
+window.addEventListener('themechange', () => { rebuildColormap(); drawAll(); });
 let rt; window.addEventListener('resize', () => { clearTimeout(rt); rt = setTimeout(drawAll, 150); });
 fillKer(); loadImg('cross'); resetDrop(true); drawQuiz(); drawAll(); onScroll();
 if (document.fonts && document.fonts.ready) document.fonts.ready.then(drawAll);

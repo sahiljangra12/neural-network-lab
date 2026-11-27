@@ -4,7 +4,7 @@
 
 A mission-control-style training console for neural networks. Design a network, launch training, and watch every neuron learn in real time. It includes guided missions and an academy of interactive lessons.
 
-**Look and feel:** a light, futuristic console: pale grid background with a drifting node network, white panels with red corner brackets, condensed uppercase headings, black ink with red as the only accent. Animated (signal pulses, scanner sweep, scroll reveals) and switched off automatically for reduced-motion settings.
+**Look and feel:** a futuristic console, dark by default with a light-mode switch in the top bar (the choice is remembered). Grid background with a drifting node network, panels with red corner brackets, condensed uppercase headings, and red as the only accent. Animated (signal pulses, scanner sweep, scroll reveals) and switched off automatically for reduced-motion settings.
 
 ## Console (`index.html`)
 - **8 datasets:** six classification (circle, XOR, Gaussian, spiral, two moons, checkerboard) and two regression (plane, multi-Gaussian). You can set the noise, the train/test split and the batch size.

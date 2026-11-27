@@ -1,6 +1,9 @@
 // Ambient effects for the futuristic light theme: drifting node network, scroll reveal, boot sequence.
 (function () {
-  document.documentElement.setAttribute('data-theme', 'light');
+  var theme = 'dark';
+  try { var st = localStorage.getItem('nnl-theme'); if (st === 'light' || st === 'dark') theme = st; } catch (e) {}
+  document.documentElement.setAttribute('data-theme', theme);
+  var dark = function () { return document.documentElement.getAttribute('data-theme') !== 'light'; };
   var reduce = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
 
   document.addEventListener('DOMContentLoaded', function () {
@@ -23,24 +26,38 @@
           for (var a = 0; a < P.length; a++) for (var b = a + 1; b < P.length; b++) {
             var dx = P[a].x - P[b].x, dy = P[a].y - P[b].y, d = dx * dx + dy * dy;
             if (d < 26000) {
-              ctx.strokeStyle = 'rgba(11,11,11,' + (0.13 * (1 - d / 26000)).toFixed(3) + ')';
+              ctx.strokeStyle = (dark() ? 'rgba(235,240,245,' : 'rgba(11,11,11,') + ((dark() ? 0.16 : 0.13) * (1 - d / 26000)).toFixed(3) + ')';
               ctx.beginPath(); ctx.moveTo(P[a].x, P[a].y); ctx.lineTo(P[b].x, P[b].y); ctx.stroke();
               if (pulses.length < 10 && Math.random() < 0.0006) pulses.push({ a: P[a], b: P[b], t: 0 });
             }
           }
           for (var k = pulses.length - 1; k >= 0; k--) {
             var q = pulses[k]; q.t += 0.018; if (q.t >= 1) { pulses.splice(k, 1); continue; }
-            ctx.fillStyle = 'rgba(208,23,10,.9)'; ctx.beginPath(); ctx.arc(q.a.x + (q.b.x - q.a.x) * q.t, q.a.y + (q.b.y - q.a.y) * q.t, 2.4, 0, 7); ctx.fill();
+            ctx.fillStyle = dark() ? 'rgba(255,64,46,.95)' : 'rgba(208,23,10,.9)'; ctx.beginPath(); ctx.arc(q.a.x + (q.b.x - q.a.x) * q.t, q.a.y + (q.b.y - q.a.y) * q.t, 2.4, 0, 7); ctx.fill();
           }
           for (var j = 0; j < P.length; j++) {
             var s = P[j], near = Math.hypot(s.x - mx, s.y - my) < 130;
-            ctx.fillStyle = near ? 'rgba(208,23,10,.9)' : 'rgba(11,11,11,.32)'; ctx.beginPath(); ctx.arc(s.x, s.y, s.r + (near ? 1.2 : 0), 0, 7); ctx.fill();
+            ctx.fillStyle = near ? (dark() ? 'rgba(255,64,46,.95)' : 'rgba(208,23,10,.9)') : (dark() ? 'rgba(235,240,245,.4)' : 'rgba(11,11,11,.32)'); ctx.beginPath(); ctx.arc(s.x, s.y, s.r + (near ? 1.2 : 0), 0, 7); ctx.fill();
           }
         }
         requestAnimationFrame(frame);
       };
       requestAnimationFrame(frame);
     }
+
+    /* ---------- theme switch (dark by default) ---------- */
+    var tb = document.getElementById('themebtn');
+    var paint = function () {
+      if (tb) { tb.textContent = dark() ? 'LIGHT MODE' : 'DARK MODE'; tb.setAttribute('aria-label', 'Switch to ' + (dark() ? 'light' : 'dark') + ' mode'); }
+      document.querySelectorAll('.posname').forEach(function (el) { el.textContent = dark() ? 'white' : 'black'; });
+      var m = document.querySelector('meta[name=theme-color]'); if (m) m.content = dark() ? '#07090c' : '#eef1f4';
+    };
+    paint();
+    if (tb) tb.addEventListener('click', function () {
+      var n = dark() ? 'light' : 'dark'; document.documentElement.setAttribute('data-theme', n);
+      try { localStorage.setItem('nnl-theme', n); } catch (e) {}
+      paint(); window.dispatchEvent(new Event('themechange'));
+    });
 
     /* ---------- scroll reveal ---------- */
     var els = document.querySelectorAll('.section, .guide .card, .cards .card, .lesson .widget, .lesson .callout, .reportbox, .inspo, .steps3 a');
