@@ -1,11 +1,11 @@
-import { softmax, crossEntropy, softmaxGrad, deepProfile, DropNet, conv2d, relu, maxPool, rnnRun, attention } from './advmath.js?v=202611261442';
-import { makeData } from './data.js?v=202611261442';
-import { colormap, rebuildColormap } from './colors.js?v=202611261442';
+import { softmax, crossEntropy, softmaxGrad, deepProfile, DropNet, conv2d, relu, maxPool, rnnRun, attention } from './advmath.js?v=202611261907';
+import { makeData } from './data.js?v=202611261907';
+import { colormap, rebuildColormap } from './colors.js?v=202611261907';
 
 const $ = id => document.getElementById(id);
 const cssv = n => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
 const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
-const SANS = 'Inter, system-ui, sans-serif';
+const SANS = 'Space Grotesk, system-ui, sans-serif';
 rebuildColormap();
 
 function setup(cv) {

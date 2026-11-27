@@ -3,15 +3,15 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="theme-color" content="#f8f6f0">
+<meta name="theme-color" content="#eef1f4">
 <title>Neural Network Lab · Train a neural network in your browser</title>
 <meta name="description" content="An interactive neural network playground: build a network, train it live with backpropagation, and see what every neuron learns. With guided challenges and step-by-step lessons.">
 <link rel="icon" href="img/logo.svg" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;0,8..60,700;1,8..60,400;1,8..60,600&family=Inter:wght@500;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="css/style.css?v=202611261442">
-<link rel="stylesheet" href="css/journal.css?v=202611261442">
-<script src="js/fx.js?v=202611261442"></script>
+<link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@600;700&family=Space+Grotesk:wght@500;600;700&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css?v=202611261907">
+<link rel="stylesheet" href="css/future.css?v=202611261907">
+<script src="js/fx.js?v=202611261907"></script>
 </head>
 <body>
 <header class="nav"><div class="in">
@@ -25,6 +25,7 @@
     <a href="#report" class="opt">Report</a>
   </nav>
   <div class="sp"></div>
+  <span class="status"><i></i>SYSTEM ONLINE</span>
   <button class="iconbtn" id="share" title="Copy a link to this exact setup" aria-label="Copy link">⧉</button>
 </div></header>
 
@@ -112,7 +113,7 @@
 
 <section class="hero" id="about">
   <div>
-    <div class="kicker">An interactive article</div>
+    <div class="kicker">Neural training console</div>
     <h1>Train a neural network, and watch it learn</h1>
     <p>Choose the data, design the architecture, launch training. Each circle is a neuron showing what it has learned. On every map <span style="color:var(--neg)">red</span> is one class and black the other. Each line is a weight: black for positive, <span style="color:var(--neg)">red</span> for negative.</p>
   </div>
@@ -192,7 +193,7 @@
 <div class="tooltip" id="tip"></div>
 <div class="wedit" id="wedit"><div style="margin-bottom:6px;color:var(--mut)" id="weditlbl">Weight</div><input id="weditin" type="number" step="0.1"> <button class="btn sm" id="weditok">Set</button></div>
 
-<script type="module" src="js/playground.js?v=202611261442"></script>
+<script type="module" src="js/playground.js?v=202611261907"></script>
 <script defer src="https://sahiljangra12.github.io/ask/ask.js" data-site="Neural Network Lab"></script>
 </body>
 </html>
